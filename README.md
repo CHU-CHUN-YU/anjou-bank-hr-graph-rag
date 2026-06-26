@@ -35,6 +35,7 @@ HuggingFace LLM (no OpenAI API key required) intended for a Colab T4 GPU.
 │   ├── test_pipeline_no_llm.py     # runs the non-LLM layers on the real data
 │   └── test_retrieval_rerank.py    # embeddings + cross-encoder rerank (needs ML stack)
 ├── docs/
+│   ├── WORKFLOW.md                     # detailed system & workflow walkthrough (中文)
 │   └── README_RUNTIME_PATTERN_REWRITE.md   # original design notes (中文)
 ├── scripts/run_local.sh
 ├── requirements.txt                # full stack (embeddings + local LLM, GPU)
@@ -160,7 +161,8 @@ one, a built-in sample of key articles is used so the pipeline still runs end-to
 - A full run writes to `OUTPUT_DIR` (`./hr_ai_graph_rag_outputs`, or `/content/...` in
   Colab, gitignored): knowledge-graph `kg_nodes.csv` / `kg_edges.csv` /
   `hr_knowledge_graph.gexf`, chunks, evaluation detail + summary,
-  `evaluation_records.json` (every question's **full answer + full reference sources**),
+  `evaluation_records.json` and `evaluation_records/<id>.json` (every question's
+  **full answer + full reference sources**, aggregate + one file per question),
   `feedback_log.csv`, the run log, and a bundled ZIP (auto-downloaded in Colab).
 - See `docs/WORKFLOW.md` for a very detailed (Chinese) walkthrough of the whole
   pipeline and the per-question LangGraph workflow.
