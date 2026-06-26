@@ -1,0 +1,9 @@
+# Core (no-LLM) dependencies — enough to run DOCX parsing, hierarchical chunking,
+# offline-artifact loading, knowledge-graph construction, matchers and golden-dataset
+# loading, plus the no-LLM smoke test (tests/test_pipeline_no_llm.py).
+python-docx
+networkx
+rank-bm25
+pandas
+numpy
+tqdm

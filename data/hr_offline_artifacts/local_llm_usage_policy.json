@@ -1,0 +1,92 @@
+{
+  "schema_version": "local_llm_usage_policy_v1.0",
+  "dataset_name": "anjou_bank_hr_local_llm_usage_policy",
+  "description": "定義 runtime Colab GPU HuggingFace local LLM 適合與不適合使用的位置。",
+  "allowed_use_cases": [
+    {
+      "use_case": "grounded_answer_generation",
+      "route": [
+        "answer",
+        "disclaimer"
+      ],
+      "instruction": "僅根據 retrieved chunks、approved graph context 與 citations 生成回答。"
+    },
+    {
+      "use_case": "graph_context_verbalization",
+      "route": [
+        "answer",
+        "disclaimer"
+      ],
+      "instruction": "將 approved graph relations 轉為白話說明，例如『內規第11條優於勞基法第38條最低標準』。"
+    },
+    {
+      "use_case": "context_compression",
+      "route": [
+        "answer",
+        "disclaimer"
+      ],
+      "instruction": "當 retrieval context 過長時，壓縮為不可新增事實的 evidence summary。"
+    }
+  ],
+  "disallowed_use_cases": [
+    {
+      "use_case": "final_risk_decision",
+      "reason": "高風險轉人工與是否回答需由 deterministic guardrails 控制。"
+    },
+    {
+      "use_case": "runtime_graph_edge_creation",
+      "reason": "不得在使用者查詢時即時創建未審核 edge。"
+    },
+    {
+      "use_case": "legal_judgment",
+      "reason": "不得判定個案是否合法、誰對誰錯或是否可提告。"
+    },
+    {
+      "use_case": "retrieval_threshold_tuning",
+      "reason": "retrieval weights 與 confidence threshold 應由 Golden Dataset evaluation 調參。"
+    }
+  ],
+  "recommended_runtime_routes": {
+    "answer": "call_local_llm",
+    "disclaimer": "call_local_llm_with_disclaimer_instruction",
+    "clarify": "template_no_llm",
+    "escalate": "template_no_llm"
+  },
+  "runtime_local_llm_classifier_v2": {
+    "enabled_by_default": true,
+    "responsibilities": [
+      "category classification",
+      "intent classification",
+      "concept matching",
+      "query pattern matching",
+      "ambiguity detection",
+      "missing slot extraction",
+      "口語/錯字 normalization",
+      "candidate risk signal",
+      "optional semantic rewrite terms only",
+      "grounded final answer generation"
+    ],
+    "not_allowed_to_decide": [
+      "final route",
+      "high-risk override",
+      "legal judgment",
+      "law/policy article IDs",
+      "mandatory rewrite terms",
+      "approved graph relations"
+    ],
+    "rewrite_design": {
+      "offline_mandatory_terms_source": [
+        "rewrite_rules.json",
+        "concept_nodes.json"
+      ],
+      "runtime_optional_terms_source": "local LLM structured JSON optional_rewrite_terms",
+      "max_optional_terms": 5,
+      "rule": "local LLM optional terms may enrich semantics but must not invent law or policy article numbers"
+    },
+    "query_pattern_design": {
+      "offline_source": "query_patterns.json provides pattern schema, examples, missing_slots and fallback clarification questions",
+      "runtime_source": "local LLM predicts matched_query_pattern_ids, is_ambiguous and missing_slots",
+      "fallback": "deterministic pattern matching against query_patterns examples"
+    }
+  }
+}

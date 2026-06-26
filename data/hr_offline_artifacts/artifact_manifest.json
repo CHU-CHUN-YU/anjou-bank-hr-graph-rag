@@ -1,0 +1,53 @@
+{
+  "package_name": "anjou_bank_hr_offline_llm_artifacts_package",
+  "version": "v1.0",
+  "generated_for": "Colab HF local LLM + Graph RAG external artifacts workflow",
+  "files": [
+    {
+      "file": "workflow_role_mapping.json",
+      "purpose": "成熟 workflow 分工：offline LLM / local LLM / deterministic rules"
+    },
+    {
+      "file": "concept_nodes.json",
+      "purpose": "Concept taxonomy、aliases、related articles、risk prior"
+    },
+    {
+      "file": "risk_policy.json",
+      "purpose": "高風險 trigger phrases 與預設 route"
+    },
+    {
+      "file": "query_patterns.json",
+      "purpose": "模糊問法、錯字問法、比較問法、追問 slots"
+    },
+    {
+      "file": "rewrite_rules.json",
+      "purpose": "依 concept 做 query expansion 與 article hints"
+    },
+    {
+      "file": "relation_schema.json",
+      "purpose": "Graph relation whitelist 與 validation schema"
+    },
+    {
+      "file": "graph_relation_candidates.json",
+      "purpose": "離線抽取的候選 graph edges，含 evidence / confidence / review_status"
+    },
+    {
+      "file": "local_llm_usage_policy.json",
+      "purpose": "定義 runtime local LLM 只負責 grounded answer generation 等任務"
+    }
+  ],
+  "recommended_colab_loading_order": [
+    "concept_nodes.json",
+    "risk_policy.json",
+    "query_patterns.json",
+    "rewrite_rules.json",
+    "relation_schema.json",
+    "graph_relation_candidates.json",
+    "local_llm_usage_policy.json"
+  ],
+  "notes": [
+    "Golden Dataset 應只用於 evaluation，不建議放進 knowledge base。",
+    "graph_relation_candidates 中 review_status=needs_hr_review 的 edge 建議不直接上線，除非 demo 需要展示 review workflow。",
+    "runtime guardrails final route 應維持 deterministic，不交給 local LLM。"
+  ]
+}

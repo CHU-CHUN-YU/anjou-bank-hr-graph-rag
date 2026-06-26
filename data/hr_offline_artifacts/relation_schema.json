@@ -1,0 +1,113 @@
+{
+  "schema_version": "relation_schema_v1.0",
+  "dataset_name": "anjou_bank_hr_relation_schema",
+  "description": "Graph RAG relation type whitelist。Offline LLM 可以產生 candidate edges，但 runtime 只允許此 schema 內的 relation。",
+  "relation_types": [
+    {
+      "relation_type": "has_rule",
+      "label": "概念包含規則",
+      "description": "concept node 與 law/policy article 之間的規則歸屬關係。",
+      "allowed_source_types": [
+        "concept"
+      ],
+      "allowed_target_types": [
+        "law_article",
+        "internal_policy_article"
+      ],
+      "evidence_required": false,
+      "human_review_required": false,
+      "runtime_expandable": true
+    },
+    {
+      "relation_type": "related_to",
+      "label": "語意相關",
+      "description": "兩個節點在同一 HR 主題或概念上相關。",
+      "allowed_source_types": [
+        "concept",
+        "law_article",
+        "internal_policy_article"
+      ],
+      "allowed_target_types": [
+        "concept",
+        "law_article",
+        "internal_policy_article"
+      ],
+      "evidence_required": false,
+      "human_review_required": false,
+      "runtime_expandable": true
+    },
+    {
+      "relation_type": "refers_to",
+      "label": "參照外規",
+      "description": "內規明確參照某條法規，例如本條對應外規關係。",
+      "allowed_source_types": [
+        "internal_policy_article"
+      ],
+      "allowed_target_types": [
+        "law_article"
+      ],
+      "evidence_required": true,
+      "human_review_required": false,
+      "runtime_expandable": true
+    },
+    {
+      "relation_type": "overrides",
+      "label": "提供較有利條件",
+      "description": "內規提供優於法規最低標準之條件，不代表法規失效。",
+      "allowed_source_types": [
+        "internal_policy_article"
+      ],
+      "allowed_target_types": [
+        "law_article"
+      ],
+      "evidence_required": true,
+      "human_review_required": true,
+      "runtime_expandable": true
+    },
+    {
+      "relation_type": "supplements",
+      "label": "補充細節",
+      "description": "內規在不降低法定權益前提下補充流程、期限、證明或內部管理細節。",
+      "allowed_source_types": [
+        "internal_policy_article"
+      ],
+      "allowed_target_types": [
+        "law_article",
+        "concept"
+      ],
+      "evidence_required": true,
+      "human_review_required": false,
+      "runtime_expandable": true
+    },
+    {
+      "relation_type": "requires_review",
+      "label": "需人工審核",
+      "description": "涉及高風險、個資、薪資、法律責任或申訴等需要人工處理。",
+      "allowed_source_types": [
+        "concept",
+        "internal_policy_article"
+      ],
+      "allowed_target_types": [
+        "concept"
+      ],
+      "evidence_required": true,
+      "human_review_required": true,
+      "runtime_expandable": true
+    },
+    {
+      "relation_type": "answer_boundary",
+      "label": "AI 回答邊界",
+      "description": "定義 AI 僅能提供一般規章說明，不作個案最終認定。",
+      "allowed_source_types": [
+        "internal_policy_article",
+        "concept"
+      ],
+      "allowed_target_types": [
+        "concept"
+      ],
+      "evidence_required": true,
+      "human_review_required": true,
+      "runtime_expandable": true
+    }
+  ]
+}

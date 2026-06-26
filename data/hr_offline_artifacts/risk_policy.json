@@ -1,0 +1,159 @@
+{
+  "schema_version": "risk_policy_v1.0",
+  "dataset_name": "anjou_bank_hr_risk_policy",
+  "description": "將原本寫死的高風險關鍵字外部化。Offline LLM 可產生 trigger phrases，但需 HR/法遵審核；runtime 仍以 deterministic guardrails 執行。",
+  "risk_policies": [
+    {
+      "risk_policy_id": "risk_legal_judgment",
+      "category": "high_risk",
+      "risk_level": "high",
+      "default_route": "escalate",
+      "trigger_phrases": [
+        "是否合法",
+        "違法嗎",
+        "可以告嗎",
+        "提告",
+        "法律責任",
+        "誰對誰錯"
+      ],
+      "related_concepts": [
+        "concept_high_risk_hr_issue"
+      ],
+      "recommended_response_policy": "不直接做法律判斷；提供一般規範與轉 HR/法遵。",
+      "human_review_required": true
+    },
+    {
+      "risk_policy_id": "risk_leave_dispute",
+      "category": "leave",
+      "risk_level": "high",
+      "default_route": "escalate",
+      "trigger_phrases": [
+        "主管不給假",
+        "請假被拒",
+        "不准假",
+        "假別爭議",
+        "長期病假",
+        "證明文件爭議"
+      ],
+      "related_concepts": [
+        "concept_leave_dispute"
+      ],
+      "recommended_response_policy": "不判定主管是否合法；請補充假別與情境，並轉 HR/法遵。",
+      "human_review_required": true
+    },
+    {
+      "risk_policy_id": "risk_unreported_overtime",
+      "category": "overtime",
+      "risk_level": "high",
+      "default_route": "escalate",
+      "trigger_phrases": [
+        "主管逼我加班",
+        "不讓我報加班",
+        "加班沒申報",
+        "加班費少給",
+        "未申報加班",
+        "工時紀錄不符"
+      ],
+      "related_concepts": [
+        "concept_unreported_overtime",
+        "concept_overtime_pay"
+      ],
+      "recommended_response_policy": "提醒保留出勤/工作紀錄，並由 HR 啟動查核；AI 不做個案違法判斷。",
+      "human_review_required": true
+    },
+    {
+      "risk_policy_id": "risk_salary_deduction",
+      "category": "salary",
+      "risk_level": "high",
+      "default_route": "escalate",
+      "trigger_phrases": [
+        "扣薪",
+        "薪水被扣",
+        "預扣工資",
+        "公司扣我薪水",
+        "賠償扣薪",
+        "薪資爭議"
+      ],
+      "related_concepts": [
+        "concept_salary_deduction",
+        "concept_salary"
+      ],
+      "recommended_response_policy": "可說明工資原則與內規；涉及個案扣款需 HR 薪酬/法遵處理。",
+      "human_review_required": true
+    },
+    {
+      "risk_policy_id": "risk_privacy_sensitive",
+      "category": "privacy_sensitive",
+      "risk_level": "high",
+      "default_route": "escalate",
+      "trigger_phrases": [
+        "查同事薪水",
+        "同事薪資",
+        "健康資料",
+        "病歷",
+        "個資",
+        "薪資明細"
+      ],
+      "related_concepts": [
+        "concept_privacy_sensitive"
+      ],
+      "recommended_response_policy": "不得提供或協助查詢他人個資；需依權限與正式流程。",
+      "human_review_required": true
+    },
+    {
+      "risk_policy_id": "risk_termination",
+      "category": "termination",
+      "risk_level": "high",
+      "default_route": "escalate",
+      "trigger_phrases": [
+        "被資遣",
+        "解僱",
+        "非自願離職",
+        "契約終止",
+        "公司這樣合法嗎"
+      ],
+      "related_concepts": [
+        "concept_termination"
+      ],
+      "recommended_response_policy": "可說明預告期間等一般規則；個案合法性轉 HR/法遵。",
+      "human_review_required": true
+    },
+    {
+      "risk_policy_id": "risk_occupational_accident",
+      "category": "occupational_accident",
+      "risk_level": "high",
+      "default_route": "escalate",
+      "trigger_phrases": [
+        "職災",
+        "工作受傷",
+        "職業災害",
+        "職災補償",
+        "因工作受傷"
+      ],
+      "related_concepts": [
+        "concept_occupational_accident"
+      ],
+      "recommended_response_policy": "職災認定與補償屬高風險，AI 不做最終認定。",
+      "human_review_required": true
+    },
+    {
+      "risk_policy_id": "risk_personal_health_family_case",
+      "category": "leave",
+      "risk_level": "medium",
+      "default_route": "disclaimer",
+      "trigger_phrases": [
+        "家庭照顧",
+        "家人住院",
+        "長期照顧",
+        "生病請假很多天",
+        "重大傷病"
+      ],
+      "related_concepts": [
+        "concept_family_care_leave",
+        "concept_sick_leave"
+      ],
+      "recommended_response_policy": "提供一般流程與可申請假別，提醒個案需 HR/主管評估。",
+      "human_review_required": false
+    }
+  ]
+}

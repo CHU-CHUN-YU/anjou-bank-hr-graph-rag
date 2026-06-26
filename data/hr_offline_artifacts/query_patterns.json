@@ -1,0 +1,157 @@
+{
+  "schema_version": "query_patterns_v1.0",
+  "dataset_name": "anjou_bank_hr_query_patterns",
+  "description": "將模糊問法、錯字問法與常見口語問法外部化。Runtime 讀入後可做 pattern match、slot filling 與 clarify routing。",
+  "patterns": [
+    {
+      "pattern_id": "amb_leave_general",
+      "pattern_type": "ambiguous",
+      "category": "leave",
+      "examples": [
+        "我要請假",
+        "我想請假",
+        "請假規定是什麼",
+        "休假怎麼辦",
+        "我可以一直請假嗎"
+      ],
+      "missing_slots": [
+        "假別",
+        "請假期間",
+        "請假原因",
+        "是否涉及主管核准或爭議"
+      ],
+      "default_route": "clarify",
+      "clarification_questions": [
+        "請問你想查詢的是特休、病假、事假、家庭照顧假，還是其他假別？",
+        "請問是想了解申請流程、薪資影響，還是主管核准爭議？"
+      ]
+    },
+    {
+      "pattern_id": "amb_overtime_general",
+      "pattern_type": "ambiguous",
+      "category": "overtime",
+      "examples": [
+        "加班怎麼辦",
+        "晚下班可以嗎",
+        "我今天加班了",
+        "可以換休嗎"
+      ],
+      "missing_slots": [
+        "是否經核准",
+        "平日或休息日",
+        "加班時數",
+        "想領加班費或補休"
+      ],
+      "default_route": "clarify",
+      "clarification_questions": [
+        "請問加班是否已經經主管核准或事後補申請？",
+        "請問是平日加班、休息日加班，還是國定假日加班？"
+      ]
+    },
+    {
+      "pattern_id": "amb_salary_general",
+      "pattern_type": "ambiguous",
+      "category": "salary",
+      "examples": [
+        "薪水有問題",
+        "薪資怎麼算",
+        "我錢少了",
+        "薪資明細怪怪的"
+      ],
+      "missing_slots": [
+        "薪資項目",
+        "月份",
+        "是否涉及扣款或加班費",
+        "是否已有薪資明細"
+      ],
+      "default_route": "disclaimer",
+      "clarification_questions": [
+        "請問是薪資給付、扣款、加班費、津貼，還是補休折算問題？",
+        "若涉及個人薪資明細，建議洽 HR 薪酬窗口確認。"
+      ]
+    },
+    {
+      "pattern_id": "typo_special_leave",
+      "pattern_type": "typo",
+      "category": "leave",
+      "examples": [
+        "特修幾天",
+        "特秀幾天",
+        "年價幾天"
+      ],
+      "normalized_query_hint": "特休幾天",
+      "missing_slots": [
+        "年資"
+      ],
+      "default_route": "clarify",
+      "clarification_questions": [
+        "你想問的應該是特休，請問目前年資是滿半年、滿一年，還是其他年資？"
+      ]
+    },
+    {
+      "pattern_id": "typo_overtime_pay",
+      "pattern_type": "typo",
+      "category": "overtime",
+      "examples": [
+        "加班廢怎麼算",
+        "加班會怎麼算",
+        "加班非怎麼算"
+      ],
+      "normalized_query_hint": "加班費怎麼算",
+      "missing_slots": [
+        "加班日期類型",
+        "加班時數"
+      ],
+      "default_route": "answer",
+      "clarification_questions": [
+        "若要精算金額，請補充平日或休息日、加班時數與時薪。"
+      ]
+    },
+    {
+      "pattern_id": "typo_travel_subsidy",
+      "pattern_type": "typo",
+      "category": "welfare",
+      "examples": [
+        "旅遊補住",
+        "旅遊不助",
+        "員工旅遊補組"
+      ],
+      "normalized_query_hint": "旅遊補助",
+      "missing_slots": [],
+      "default_route": "answer",
+      "clarification_questions": []
+    },
+    {
+      "pattern_id": "compare_policy_law",
+      "pattern_type": "comparison",
+      "category": "general",
+      "examples": [
+        "內規跟勞基法差在哪",
+        "公司規定為什麼比較多",
+        "法規跟公司制度哪個優先",
+        "安久銀行特休為什麼比勞基法多"
+      ],
+      "required_relations": [
+        "overrides",
+        "refers_to",
+        "has_rule"
+      ],
+      "default_route": "answer",
+      "clarification_questions": []
+    },
+    {
+      "pattern_id": "high_risk_legal",
+      "pattern_type": "high_risk",
+      "category": "high_risk",
+      "examples": [
+        "是否合法",
+        "可以告嗎",
+        "主管這樣違法嗎",
+        "AI可以幫我判斷誰對誰錯嗎"
+      ],
+      "missing_slots": [],
+      "default_route": "escalate",
+      "clarification_questions": []
+    }
+  ]
+}

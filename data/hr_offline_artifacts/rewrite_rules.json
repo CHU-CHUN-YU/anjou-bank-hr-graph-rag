@@ -1,0 +1,259 @@
+{
+  "schema_version": "rewrite_rules_v1.0",
+  "dataset_name": "anjou_bank_hr_rewrite_rules",
+  "description": "依 concept 進行 query expansion 的外部化規則。Runtime 可依 matched concept 加入 rewrite_terms 與 article hints。",
+  "rewrite_rules": [
+    {
+      "concept_id": "concept_special_leave",
+      "category": "leave",
+      "rewrite_terms": [
+        "特別休假",
+        "特休",
+        "年假",
+        "滿6個月",
+        "滿1年",
+        "未休特休",
+        "勞動基準法第38條",
+        "安久銀行第11條",
+        "安久銀行第12條"
+      ],
+      "article_hints": [
+        "law_article_38",
+        "policy_article_11",
+        "policy_article_12"
+      ]
+    },
+    {
+      "concept_id": "concept_sick_leave",
+      "category": "leave",
+      "rewrite_terms": [
+        "病假",
+        "普通傷病",
+        "就醫",
+        "診斷證明",
+        "連續2日",
+        "勞動基準法第43條",
+        "安久銀行第13條"
+      ],
+      "article_hints": [
+        "law_article_43",
+        "policy_article_13"
+      ]
+    },
+    {
+      "concept_id": "concept_personal_leave",
+      "category": "leave",
+      "rewrite_terms": [
+        "事假",
+        "個人事務",
+        "事前申請",
+        "主管核准",
+        "突發事故",
+        "安久銀行第14條"
+      ],
+      "article_hints": [
+        "policy_article_14"
+      ]
+    },
+    {
+      "concept_id": "concept_working_hours",
+      "category": "working_hours",
+      "rewrite_terms": [
+        "正常工作時間",
+        "每日8小時",
+        "每週40小時",
+        "9:00至18:00",
+        "彈性上下班",
+        "勞動基準法第30條",
+        "安久銀行第5條",
+        "安久銀行第6條"
+      ],
+      "article_hints": [
+        "law_article_30",
+        "policy_article_5",
+        "policy_article_6"
+      ]
+    },
+    {
+      "concept_id": "concept_weekly_rest",
+      "category": "leave",
+      "rewrite_terms": [
+        "例假日",
+        "休息日",
+        "每7日2日休息",
+        "一例一休",
+        "週六休息日",
+        "週日例假日",
+        "勞動基準法第36條",
+        "安久銀行第9條"
+      ],
+      "article_hints": [
+        "law_article_36",
+        "policy_article_9"
+      ]
+    },
+    {
+      "concept_id": "concept_overtime_pay",
+      "category": "overtime",
+      "rewrite_terms": [
+        "加班費",
+        "延長工時工資",
+        "前2小時三分之一",
+        "再延長2小時三分之二",
+        "休息日加班",
+        "勞動基準法第24條",
+        "安久銀行第20條"
+      ],
+      "article_hints": [
+        "law_article_24",
+        "policy_article_20"
+      ]
+    },
+    {
+      "concept_id": "concept_overtime_limit",
+      "category": "overtime",
+      "rewrite_terms": [
+        "延長工時限制",
+        "每日工時上限",
+        "每月加班上限",
+        "不得強制加班",
+        "健康理由",
+        "勞動基準法第32條",
+        "勞動基準法第42條",
+        "安久銀行第19條"
+      ],
+      "article_hints": [
+        "law_article_32",
+        "law_article_42",
+        "policy_article_19"
+      ]
+    },
+    {
+      "concept_id": "concept_comp_time",
+      "category": "overtime",
+      "rewrite_terms": [
+        "補休",
+        "換補休",
+        "加班換休",
+        "補休期限",
+        "未休畢發給工資",
+        "6個月",
+        "勞動基準法第32-1條",
+        "安久銀行第23條",
+        "安久銀行第25條",
+        "安久銀行第26條"
+      ],
+      "article_hints": [
+        "law_article_32_1",
+        "policy_article_23",
+        "policy_article_25",
+        "policy_article_26"
+      ]
+    },
+    {
+      "concept_id": "concept_salary",
+      "category": "salary",
+      "rewrite_terms": [
+        "薪資",
+        "工資",
+        "薪資給付",
+        "薪資明細",
+        "工資清冊",
+        "加班費",
+        "勞動基準法第22條",
+        "勞動基準法第23條",
+        "安久銀行第34條"
+      ],
+      "article_hints": [
+        "law_article_22",
+        "law_article_23",
+        "policy_article_34"
+      ]
+    },
+    {
+      "concept_id": "concept_salary_deduction",
+      "category": "salary",
+      "rewrite_terms": [
+        "薪資扣款",
+        "扣薪",
+        "預扣工資",
+        "違約金",
+        "賠償費用",
+        "薪資明細揭示",
+        "勞動基準法第22條",
+        "安久銀行第35條"
+      ],
+      "article_hints": [
+        "law_article_22",
+        "policy_article_35"
+      ]
+    },
+    {
+      "concept_id": "concept_welfare",
+      "category": "welfare",
+      "rewrite_terms": [
+        "福利制度",
+        "健康檢查",
+        "旅遊補助",
+        "教育訓練",
+        "證照補助",
+        "員工關懷",
+        "急難協助",
+        "生日節慶福利",
+        "安久銀行第28條",
+        "安久銀行第29條",
+        "安久銀行第30條",
+        "安久銀行第31條",
+        "安久銀行第32條",
+        "安久銀行第33條"
+      ],
+      "article_hints": [
+        "policy_article_28",
+        "policy_article_29",
+        "policy_article_30",
+        "policy_article_31",
+        "policy_article_32",
+        "policy_article_33"
+      ]
+    },
+    {
+      "concept_id": "concept_privacy_sensitive",
+      "category": "privacy_sensitive",
+      "rewrite_terms": [
+        "個資",
+        "健康檢查資料",
+        "薪資明細",
+        "敏感資料",
+        "非權責人員",
+        "資料留存",
+        "個人資料保護",
+        "安久銀行第29條",
+        "安久銀行第36條"
+      ],
+      "article_hints": [
+        "policy_article_29",
+        "policy_article_36"
+      ]
+    },
+    {
+      "concept_id": "concept_high_risk_hr_issue",
+      "category": "high_risk",
+      "rewrite_terms": [
+        "申訴",
+        "懲處",
+        "資遣",
+        "個資",
+        "法律責任判斷",
+        "不作個案最終認定",
+        "HR",
+        "法遵",
+        "安久銀行第4條",
+        "安久銀行第17條"
+      ],
+      "article_hints": [
+        "policy_article_4",
+        "policy_article_17"
+      ]
+    }
+  ]
+}

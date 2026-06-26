@@ -1,0 +1,26 @@
+# Full dependencies for the complete pipeline (retrieval embeddings + local LLM).
+# Designed for a Colab T4 GPU (or any CUDA GPU). On CPU the embedding step works but
+# is slow and the 4-bit local LLM requires a GPU.
+#
+# Core (no-LLM) layers:
+python-docx
+networkx
+rank-bm25
+pandas
+numpy
+tqdm
+
+# Retrieval embeddings + FAISS:
+sentence-transformers
+faiss-cpu
+
+# Local HuggingFace LLM (GPU recommended):
+torch
+transformers
+accelerate
+bitsandbytes
+
+# Workflow + display:
+langgraph
+rich
+ipython

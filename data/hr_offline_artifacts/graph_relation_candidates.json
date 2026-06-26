@@ -1,0 +1,350 @@
+{
+  "schema_version": "graph_relation_candidates_v1.0",
+  "dataset_name": "anjou_bank_hr_graph_relation_candidates",
+  "description": "依據勞動基準法核心條文與安久銀行內規抽取的候選 graph edges。建議 runtime 只載入 review_status = approved 或經 HR 審核後的 edges；overrides 類型預設需 review。",
+  "edge_candidates": [
+    {
+      "edge_id": "e_policy3_law1",
+      "source_node": "policy_article_3",
+      "target_node": "law_article_1",
+      "relation_type": "refers_to",
+      "evidence": "本辦法如有未盡事項，應依《勞動基準法》及其他相關法令辦理。",
+      "confidence": 0.95,
+      "review_status": "approved",
+      "human_review_required": false,
+      "related_concepts": [
+        "concept_law_baseline",
+        "concept_internal_policy_priority"
+      ]
+    },
+    {
+      "edge_id": "e_policy3_concept_priority",
+      "source_node": "policy_article_3",
+      "target_node": "concept_internal_policy_priority",
+      "relation_type": "supplements",
+      "evidence": "本辦法如提供優於法令最低標準之工作條件或福利措施，員工得依本辦法適用較有利之規定。",
+      "confidence": 0.96,
+      "review_status": "approved",
+      "human_review_required": false,
+      "related_concepts": [
+        "concept_internal_policy_priority"
+      ]
+    },
+    {
+      "edge_id": "e_policy4_ai_boundary",
+      "source_node": "policy_article_4",
+      "target_node": "concept_high_risk_hr_issue",
+      "relation_type": "answer_boundary",
+      "evidence": "涉及個人薪資、假勤爭議、主管核准、申訴、懲處、資遣、個資或法律責任判斷者，HR AI 智能助理僅提供一般性規章說明，不作個案最終認定。",
+      "confidence": 0.98,
+      "review_status": "approved",
+      "human_review_required": true,
+      "related_concepts": [
+        "concept_high_risk_hr_issue"
+      ]
+    },
+    {
+      "edge_id": "e_policy5_law30",
+      "source_node": "policy_article_5",
+      "target_node": "law_article_30",
+      "relation_type": "refers_to",
+      "evidence": "本條對應外規關係：參照《勞動基準法》第30條正常工作時間規範。",
+      "confidence": 0.98,
+      "review_status": "approved",
+      "human_review_required": false,
+      "related_concepts": [
+        "concept_working_hours"
+      ]
+    },
+    {
+      "edge_id": "e_policy7_attendance",
+      "source_node": "policy_article_7",
+      "target_node": "concept_attendance_record",
+      "relation_type": "supplements",
+      "evidence": "員工應依本行規定使用差勤系統、門禁系統、打卡系統或其他指定方式記錄出勤。",
+      "confidence": 0.9,
+      "review_status": "approved",
+      "human_review_required": false,
+      "related_concepts": [
+        "concept_attendance_record"
+      ]
+    },
+    {
+      "edge_id": "e_policy9_law36",
+      "source_node": "policy_article_9",
+      "target_node": "law_article_36",
+      "relation_type": "refers_to",
+      "evidence": "本條對應外規關係：參照《勞動基準法》第36條例假與休息日規範。",
+      "confidence": 0.98,
+      "review_status": "approved",
+      "human_review_required": false,
+      "related_concepts": [
+        "concept_weekly_rest"
+      ]
+    },
+    {
+      "edge_id": "e_policy11_law38",
+      "source_node": "policy_article_11",
+      "target_node": "law_article_38",
+      "relation_type": "overrides",
+      "evidence": "本行特別休假日數原則上優於《勞動基準法》最低標準；本條參照第38條特別休假規範。",
+      "confidence": 0.97,
+      "review_status": "needs_hr_review",
+      "human_review_required": true,
+      "related_concepts": [
+        "concept_special_leave",
+        "concept_internal_policy_priority"
+      ]
+    },
+    {
+      "edge_id": "e_policy12_law38",
+      "source_node": "policy_article_12",
+      "target_node": "law_article_38",
+      "relation_type": "supplements",
+      "evidence": "年度終結或契約終止時仍未休畢之特別休假，應依本行薪資結算規定及相關法令辦理折算或給付。",
+      "confidence": 0.88,
+      "review_status": "approved",
+      "human_review_required": false,
+      "related_concepts": [
+        "concept_special_leave"
+      ]
+    },
+    {
+      "edge_id": "e_policy13_law43",
+      "source_node": "policy_article_13",
+      "target_node": "law_article_43",
+      "relation_type": "supplements",
+      "evidence": "員工因普通傷病需休養或就醫者，得申請病假；連續病假達2日以上應檢附證明。",
+      "confidence": 0.86,
+      "review_status": "approved",
+      "human_review_required": false,
+      "related_concepts": [
+        "concept_sick_leave"
+      ]
+    },
+    {
+      "edge_id": "e_policy14_law43",
+      "source_node": "policy_article_14",
+      "target_node": "law_article_43",
+      "relation_type": "supplements",
+      "evidence": "員工因個人事務需親自處理者，得申請事假，且應事前申請並經主管核准。",
+      "confidence": 0.84,
+      "review_status": "approved",
+      "human_review_required": false,
+      "related_concepts": [
+        "concept_personal_leave"
+      ]
+    },
+    {
+      "edge_id": "e_policy16_law43",
+      "source_node": "policy_article_16",
+      "target_node": "law_article_43",
+      "relation_type": "supplements",
+      "evidence": "婚假、喪假、產假、陪產檢及陪產假、生理假、育嬰留職停薪及其他法定假別，依相關法令及本行公告辦理。",
+      "confidence": 0.86,
+      "review_status": "approved",
+      "human_review_required": false,
+      "related_concepts": [
+        "concept_statutory_leave"
+      ]
+    },
+    {
+      "edge_id": "e_policy17_law43",
+      "source_node": "policy_article_17",
+      "target_node": "law_article_43",
+      "relation_type": "refers_to",
+      "evidence": "本條對應外規關係：參照《勞動基準法》第43條請假相關規範。",
+      "confidence": 0.97,
+      "review_status": "approved",
+      "human_review_required": false,
+      "related_concepts": [
+        "concept_leave_dispute"
+      ]
+    },
+    {
+      "edge_id": "e_policy17_review",
+      "source_node": "policy_article_17",
+      "target_node": "concept_leave_dispute",
+      "relation_type": "requires_review",
+      "evidence": "涉及個案爭議、主管不核准、長期病假、職災、申訴或法律責任判斷者，HR AI 智能助理不得直接作最終判定。",
+      "confidence": 0.98,
+      "review_status": "approved",
+      "human_review_required": true,
+      "related_concepts": [
+        "concept_leave_dispute",
+        "concept_high_risk_hr_issue"
+      ]
+    },
+    {
+      "edge_id": "e_policy19_law32",
+      "source_node": "policy_article_19",
+      "target_node": "law_article_32",
+      "relation_type": "refers_to",
+      "evidence": "本條對應外規關係：參照《勞動基準法》第32條延長工時。",
+      "confidence": 0.96,
+      "review_status": "approved",
+      "human_review_required": false,
+      "related_concepts": [
+        "concept_overtime_limit"
+      ]
+    },
+    {
+      "edge_id": "e_policy19_law42",
+      "source_node": "policy_article_19",
+      "target_node": "law_article_42",
+      "relation_type": "refers_to",
+      "evidence": "本條對應外規關係：參照《勞動基準法》第42條不得強制延長工時之精神。",
+      "confidence": 0.95,
+      "review_status": "approved",
+      "human_review_required": false,
+      "related_concepts": [
+        "concept_overtime_limit"
+      ]
+    },
+    {
+      "edge_id": "e_policy20_law24",
+      "source_node": "policy_article_20",
+      "target_node": "law_article_24",
+      "relation_type": "refers_to",
+      "evidence": "本條對應外規關係：參照《勞動基準法》第24條加班費規範。",
+      "confidence": 0.99,
+      "review_status": "approved",
+      "human_review_required": false,
+      "related_concepts": [
+        "concept_overtime_pay"
+      ]
+    },
+    {
+      "edge_id": "e_policy21_review",
+      "source_node": "policy_article_21",
+      "target_node": "concept_unreported_overtime",
+      "relation_type": "requires_review",
+      "evidence": "主管不得要求員工形式上不申報加班而實際提供勞務；HR應啟動查核程序。",
+      "confidence": 0.96,
+      "review_status": "approved",
+      "human_review_required": true,
+      "related_concepts": [
+        "concept_unreported_overtime"
+      ]
+    },
+    {
+      "edge_id": "e_policy23_law32_1",
+      "source_node": "policy_article_23",
+      "target_node": "law_article_32_1",
+      "relation_type": "refers_to",
+      "evidence": "本條對應外規關係：參照《勞動基準法》第32-1條補休規範。",
+      "confidence": 0.99,
+      "review_status": "approved",
+      "human_review_required": false,
+      "related_concepts": [
+        "concept_comp_time"
+      ]
+    },
+    {
+      "edge_id": "e_policy23_no_evasion",
+      "source_node": "policy_article_23",
+      "target_node": "concept_comp_time",
+      "relation_type": "supplements",
+      "evidence": "本行不得以補休制度規避依法應給付之加班費。",
+      "confidence": 0.94,
+      "review_status": "approved",
+      "human_review_required": false,
+      "related_concepts": [
+        "concept_comp_time",
+        "concept_overtime_pay"
+      ]
+    },
+    {
+      "edge_id": "e_policy25_comp_deadline",
+      "source_node": "policy_article_25",
+      "target_node": "concept_comp_time",
+      "relation_type": "supplements",
+      "evidence": "員工補休應於加班事實發生日起6個月內完成安排。",
+      "confidence": 0.93,
+      "review_status": "approved",
+      "human_review_required": false,
+      "related_concepts": [
+        "concept_comp_time"
+      ]
+    },
+    {
+      "edge_id": "e_policy26_comp_payout",
+      "source_node": "policy_article_26",
+      "target_node": "law_article_32_1",
+      "relation_type": "supplements",
+      "evidence": "離職、資遣、退休、契約終止或補休期限屆滿尚有未休畢補休時數者，應依工資計算標準發給工資。",
+      "confidence": 0.9,
+      "review_status": "approved",
+      "human_review_required": false,
+      "related_concepts": [
+        "concept_comp_time",
+        "concept_termination"
+      ]
+    },
+    {
+      "edge_id": "e_policy29_privacy",
+      "source_node": "policy_article_29",
+      "target_node": "concept_privacy_sensitive",
+      "relation_type": "requires_review",
+      "evidence": "員工健康檢查資料涉及個人健康資訊，不得由非權責人員查閱。",
+      "confidence": 0.95,
+      "review_status": "approved",
+      "human_review_required": true,
+      "related_concepts": [
+        "concept_privacy_sensitive"
+      ]
+    },
+    {
+      "edge_id": "e_policy34_law22",
+      "source_node": "policy_article_34",
+      "target_node": "law_article_22",
+      "relation_type": "refers_to",
+      "evidence": "本條對應外規關係：參照《勞動基準法》第22條工資給付。",
+      "confidence": 0.96,
+      "review_status": "approved",
+      "human_review_required": false,
+      "related_concepts": [
+        "concept_salary"
+      ]
+    },
+    {
+      "edge_id": "e_policy34_law23",
+      "source_node": "policy_article_34",
+      "target_node": "law_article_23",
+      "relation_type": "refers_to",
+      "evidence": "本條對應外規關係：參照《勞動基準法》第23條工資清冊規範。",
+      "confidence": 0.96,
+      "review_status": "approved",
+      "human_review_required": false,
+      "related_concepts": [
+        "concept_salary"
+      ]
+    },
+    {
+      "edge_id": "e_policy35_law22",
+      "source_node": "policy_article_35",
+      "target_node": "law_article_22",
+      "relation_type": "supplements",
+      "evidence": "本行不得任意預扣員工工資作為違約金或賠償費用。",
+      "confidence": 0.93,
+      "review_status": "approved",
+      "human_review_required": false,
+      "related_concepts": [
+        "concept_salary_deduction"
+      ]
+    },
+    {
+      "edge_id": "e_policy36_privacy",
+      "source_node": "policy_article_36",
+      "target_node": "concept_privacy_sensitive",
+      "relation_type": "requires_review",
+      "evidence": "涉及員工個資與敏感資料者，應依個人資料保護法及本行資訊安全政策辦理。",
+      "confidence": 0.96,
+      "review_status": "approved",
+      "human_review_required": true,
+      "related_concepts": [
+        "concept_privacy_sensitive"
+      ]
+    }
+  ]
+}

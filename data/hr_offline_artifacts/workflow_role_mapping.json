@@ -1,0 +1,183 @@
+{
+  "schema_version": "workflow_role_mapping_v1.0",
+  "dataset_name": "anjou_bank_hr_ai_workflow_roles",
+  "description": "成熟 HR AI / Graph RAG workflow 中，各模組建議由 offline LLM、runtime local LLM 或 deterministic rule-based pipeline 承擔的分工。",
+  "roles": [
+    {
+      "component": "labor_law_docx",
+      "current_source": "uploaded_file",
+      "recommended_owner": "human_curated_source",
+      "runtime_local_llm": "no",
+      "offline_llm": "no",
+      "rule_based": "docx_parser_only",
+      "recommendation": "維持外部正式來源；不要由 LLM 生成法規內容。"
+    },
+    {
+      "component": "internal_policy_docx",
+      "current_source": "uploaded_file",
+      "recommended_owner": "offline_llm_assisted_human_reviewed",
+      "runtime_local_llm": "no",
+      "offline_llm": "yes",
+      "rule_based": "docx_parser_only",
+      "recommendation": "可由 offline LLM 草擬，但必須由 HR/法遵審核後版本化。"
+    },
+    {
+      "component": "golden_dataset_json",
+      "current_source": "uploaded_file",
+      "recommended_owner": "offline_llm_assisted_human_reviewed",
+      "runtime_local_llm": "no",
+      "offline_llm": "yes",
+      "rule_based": "evaluation_runner",
+      "recommendation": "可由 offline LLM 產生多題型測試集，人工審核後作 regression test。"
+    },
+    {
+      "component": "concept_nodes",
+      "current_source": "json_artifact",
+      "recommended_owner": "offline_llm_assisted_human_reviewed",
+      "runtime_local_llm": "no",
+      "offline_llm": "yes",
+      "rule_based": "runtime_load_and_match",
+      "recommendation": "概念節點、別名、相關條文、風險層級適合外部化為 JSON。"
+    },
+    {
+      "component": "category_keywords_aliases",
+      "current_source": "code_hardcoded",
+      "recommended_owner": "offline_llm_artifact",
+      "runtime_local_llm": "no",
+      "offline_llm": "yes",
+      "rule_based": "keyword_or_embedding_match",
+      "recommendation": "改由 concept_nodes / query_patterns 提供，runtime 只做 deterministic matching。"
+    },
+    {
+      "component": "risk_keywords",
+      "current_source": "code_hardcoded",
+      "recommended_owner": "offline_llm_assisted_human_reviewed",
+      "runtime_local_llm": "no",
+      "offline_llm": "yes",
+      "rule_based": "guardrail_match_and_route",
+      "recommendation": "改為 risk_policy.json，但最終轉人工邏輯仍由程式規則控制。"
+    },
+    {
+      "component": "ambiguous_query_patterns",
+      "current_source": "code_hardcoded",
+      "recommended_owner": "offline_llm_artifact",
+      "runtime_local_llm": "no",
+      "offline_llm": "yes",
+      "rule_based": "pattern_match_and_slot_check",
+      "recommendation": "改為 query_patterns.json，支援不同類別的缺槽追問。"
+    },
+    {
+      "component": "query_rewrite_terms",
+      "current_source": "code_hardcoded",
+      "recommended_owner": "offline_llm_artifact",
+      "runtime_local_llm": "no",
+      "offline_llm": "yes",
+      "rule_based": "read_config_expand_query",
+      "recommendation": "改為 rewrite_rules.json，依 concept 補同義詞、條號、內規條文。"
+    },
+    {
+      "component": "relation_schema",
+      "current_source": "code_hardcoded_or_implicit",
+      "recommended_owner": "human_defined_with_llm_assist",
+      "runtime_local_llm": "no",
+      "offline_llm": "partial",
+      "rule_based": "schema_validation",
+      "recommendation": "relation type schema 可由人定義、LLM 補充說明；runtime 僅允許 schema 內關係。"
+    },
+    {
+      "component": "graph_relation_candidates",
+      "current_source": "regex_rules",
+      "recommended_owner": "offline_llm_assisted_validated",
+      "runtime_local_llm": "no",
+      "offline_llm": "yes",
+      "rule_based": "validate_and_load_approved_edges",
+      "recommendation": "LLM 適合離線抽候選 edge，但需 evidence、confidence、review_status。"
+    },
+    {
+      "component": "docx_parsing",
+      "current_source": "python_docx_regex",
+      "recommended_owner": "rule_based_engineering",
+      "runtime_local_llm": "no",
+      "offline_llm": "no",
+      "rule_based": "yes",
+      "recommendation": "維持 deterministic parser；不建議用 LLM 做基本解析。"
+    },
+    {
+      "component": "chunking",
+      "current_source": "rule_based",
+      "recommended_owner": "rule_based_engineering",
+      "runtime_local_llm": "no",
+      "offline_llm": "no",
+      "rule_based": "yes",
+      "recommendation": "條文型文件適合 deterministic article/semantic chunking。"
+    },
+    {
+      "component": "retrieval_scoring",
+      "current_source": "code_config",
+      "recommended_owner": "evaluation_tuned_engineering_config",
+      "runtime_local_llm": "no",
+      "offline_llm": "no",
+      "rule_based": "yes",
+      "recommendation": "權重與 threshold 應由 Golden Dataset 調參，不建議 LLM 產生。"
+    },
+    {
+      "component": "graph_expansion",
+      "current_source": "rule_based",
+      "recommended_owner": "deterministic_runtime_engine",
+      "runtime_local_llm": "optional_rerank_or_summary_only",
+      "offline_llm": "no_for_runtime_decision",
+      "rule_based": "yes",
+      "recommendation": "展開 hop、relation whitelist、priority 應 deterministic；local LLM 可做 context verbalization。"
+    },
+    {
+      "component": "guardrails_routing",
+      "current_source": "rule_based",
+      "recommended_owner": "deterministic_runtime_engine",
+      "runtime_local_llm": "no",
+      "offline_llm": "signals_only",
+      "rule_based": "yes",
+      "recommendation": "answer/disclaimer/clarify/escalate 最終決策不交給 LLM。"
+    },
+    {
+      "component": "final_answer_generation",
+      "current_source": "local_hf_llm",
+      "recommended_owner": "runtime_local_llm_grounded_generation",
+      "runtime_local_llm": "yes",
+      "offline_llm": "no",
+      "rule_based": "prompt_and_citation_constraints",
+      "recommendation": "適合呼叫 Colab GPU local LLM，僅根據 retrieved evidence 生成引用式回答。"
+    }
+  ],
+  "version_note": "runtime_pattern_rewrite_v2: query_patterns 部分改由 local LLM runtime 判斷；rewrite_rules 採 offline mandatory terms + local LLM optional terms 混合。",
+  "recommended_runtime_split": {
+    "offline_llm_artifacts": [
+      "concept_nodes",
+      "risk_policy",
+      "query_patterns_schema",
+      "rewrite_rules_mandatory_terms",
+      "relation_schema",
+      "graph_relation_candidates"
+    ],
+    "local_llm_runtime": [
+      "category",
+      "intent",
+      "concept_matching",
+      "query_pattern_matching",
+      "ambiguity",
+      "missing_slots",
+      "normalized_query",
+      "optional_rewrite_terms",
+      "candidate_risk_signal",
+      "grounded_answer_generation"
+    ],
+    "deterministic_rules": [
+      "docx_parsing",
+      "chunking",
+      "retrieval_scoring",
+      "risk_policy_override",
+      "final_route",
+      "graph_expansion",
+      "evaluation_metrics"
+    ]
+  }
+}

@@ -1,0 +1,918 @@
+{
+  "schema_version": "concept_nodes_v1.1",
+  "dataset_name": "anjou_bank_hr_concept_nodes",
+  "description": "依據勞動基準法核心外規與安久銀行員工工作與福利規章辦法模擬版建立的概念節點。適合 offline LLM-assisted + human-reviewed 後接入 Colab Knowledge Graph builder。",
+  "concept_nodes": [
+    {
+      "concept_id": "concept_hr_policy",
+      "node_type": "concept",
+      "label": "HR 規章制度",
+      "category": "general",
+      "parent_concept_id": null,
+      "aliases": [
+        "員工手冊",
+        "人資規章",
+        "工作規則",
+        "HR制度"
+      ],
+      "description": "涵蓋勞基法外規與安久銀行內部員工工作福利規章。",
+      "source_scope": [
+        "law",
+        "internal_policy"
+      ],
+      "risk_level": "low",
+      "default_answer_policy": "answer",
+      "related_law_articles": [
+        "勞動基準法第1條"
+      ],
+      "related_policy_articles": [
+        "安久銀行員工工作與福利規章辦法第1條",
+        "安久銀行員工工作與福利規章辦法第2條"
+      ],
+      "retrieval_keywords": [
+        "員工手冊",
+        "規章",
+        "HR制度",
+        "工作規則"
+      ],
+      "graph_expansion_priority": "medium",
+      "human_review_required_for_answers": false
+    },
+    {
+      "concept_id": "concept_law_baseline",
+      "node_type": "concept",
+      "label": "法規最低標準",
+      "category": "general",
+      "parent_concept_id": "concept_hr_policy",
+      "aliases": [
+        "勞基法底線",
+        "最低標準",
+        "外規",
+        "法令標準"
+      ],
+      "description": "勞動基準法是勞動條件最低標準，內規不得降低法定權益。",
+      "source_scope": [
+        "law",
+        "internal_policy"
+      ],
+      "risk_level": "medium",
+      "default_answer_policy": "answer",
+      "related_law_articles": [
+        "勞動基準法第1條"
+      ],
+      "related_policy_articles": [
+        "安久銀行員工工作與福利規章辦法第3條"
+      ],
+      "retrieval_keywords": [
+        "最低標準",
+        "不得降低",
+        "優於法規",
+        "勞基法"
+      ],
+      "graph_expansion_priority": "high",
+      "human_review_required_for_answers": false
+    },
+    {
+      "concept_id": "concept_internal_policy_priority",
+      "node_type": "concept",
+      "label": "內規優於法規",
+      "category": "general",
+      "parent_concept_id": "concept_law_baseline",
+      "aliases": [
+        "內規優先",
+        "較有利規定",
+        "優於法規",
+        "公司規定比較好"
+      ],
+      "description": "內規提供優於法令最低標準時，員工可依較有利規定適用。",
+      "source_scope": [
+        "internal_policy"
+      ],
+      "risk_level": "medium",
+      "default_answer_policy": "answer",
+      "related_law_articles": [
+        "勞動基準法第1條"
+      ],
+      "related_policy_articles": [
+        "安久銀行員工工作與福利規章辦法第3條",
+        "安久銀行員工工作與福利規章辦法第11條",
+        "安久銀行員工工作與福利規章辦法第16條"
+      ],
+      "retrieval_keywords": [
+        "內規優先",
+        "優於",
+        "較有利",
+        "福利措施"
+      ],
+      "graph_expansion_priority": "high",
+      "human_review_required_for_answers": false
+    },
+    {
+      "concept_id": "concept_working_hours",
+      "node_type": "concept",
+      "label": "工作時間",
+      "category": "working_hours",
+      "parent_concept_id": "concept_hr_policy",
+      "aliases": [
+        "工時",
+        "上班時間",
+        "每日工時",
+        "每週工時"
+      ],
+      "description": "每日與每週正常工作時間及彈性上下班制度。",
+      "source_scope": [
+        "law",
+        "internal_policy"
+      ],
+      "risk_level": "low",
+      "default_answer_policy": "answer",
+      "related_law_articles": [
+        "勞動基準法第30條"
+      ],
+      "related_policy_articles": [
+        "安久銀行員工工作與福利規章辦法第5條",
+        "安久銀行員工工作與福利規章辦法第6條"
+      ],
+      "retrieval_keywords": [
+        "工時",
+        "8小時",
+        "40小時",
+        "9:00",
+        "18:00",
+        "彈性上下班"
+      ],
+      "graph_expansion_priority": "high",
+      "human_review_required_for_answers": false
+    },
+    {
+      "concept_id": "concept_attendance_record",
+      "node_type": "concept",
+      "label": "出勤紀錄",
+      "category": "attendance",
+      "parent_concept_id": "concept_working_hours",
+      "aliases": [
+        "打卡",
+        "差勤紀錄",
+        "門禁紀錄",
+        "工時紀錄"
+      ],
+      "description": "出勤紀錄作為工時、加班、補休及薪資計算依據。",
+      "source_scope": [
+        "law",
+        "internal_policy"
+      ],
+      "risk_level": "medium",
+      "default_answer_policy": "answer",
+      "related_law_articles": [
+        "勞動基準法第30條"
+      ],
+      "related_policy_articles": [
+        "安久銀行員工工作與福利規章辦法第7條",
+        "安久銀行員工工作與福利規章辦法第36條"
+      ],
+      "retrieval_keywords": [
+        "差勤",
+        "出勤紀錄",
+        "打卡",
+        "保存",
+        "薪資計算"
+      ],
+      "graph_expansion_priority": "medium",
+      "human_review_required_for_answers": false
+    },
+    {
+      "concept_id": "concept_weekly_rest",
+      "node_type": "concept",
+      "label": "例假日與休息日",
+      "category": "leave",
+      "parent_concept_id": "concept_working_hours",
+      "aliases": [
+        "一例一休",
+        "例假",
+        "休息日",
+        "每七天休息"
+      ],
+      "description": "每 7 日中應有 2 日休息，其中 1 日為例假、1 日為休息日。",
+      "source_scope": [
+        "law",
+        "internal_policy"
+      ],
+      "risk_level": "low",
+      "default_answer_policy": "answer",
+      "related_law_articles": [
+        "勞動基準法第36條"
+      ],
+      "related_policy_articles": [
+        "安久銀行員工工作與福利規章辦法第9條"
+      ],
+      "retrieval_keywords": [
+        "例假",
+        "休息日",
+        "一例一休",
+        "每7日",
+        "週六",
+        "週日"
+      ],
+      "graph_expansion_priority": "high",
+      "human_review_required_for_answers": false
+    },
+    {
+      "concept_id": "concept_leave",
+      "node_type": "concept",
+      "label": "請假制度",
+      "category": "leave",
+      "parent_concept_id": "concept_hr_policy",
+      "aliases": [
+        "請假",
+        "休假",
+        "假別",
+        "假勤"
+      ],
+      "description": "特休、病假、事假、家庭照顧假、公假及其他假別。",
+      "source_scope": [
+        "law",
+        "internal_policy"
+      ],
+      "risk_level": "low",
+      "default_answer_policy": "answer",
+      "related_law_articles": [
+        "勞動基準法第38條",
+        "勞動基準法第43條"
+      ],
+      "related_policy_articles": [
+        "安久銀行員工工作與福利規章辦法第10條",
+        "安久銀行員工工作與福利規章辦法第17條"
+      ],
+      "retrieval_keywords": [
+        "請假",
+        "特休",
+        "病假",
+        "事假",
+        "家庭照顧假",
+        "差勤系統"
+      ],
+      "graph_expansion_priority": "high",
+      "human_review_required_for_answers": false
+    },
+    {
+      "concept_id": "concept_special_leave",
+      "node_type": "concept",
+      "label": "特別休假",
+      "category": "leave",
+      "parent_concept_id": "concept_leave",
+      "aliases": [
+        "特休",
+        "年假",
+        "特別假",
+        "休年假"
+      ],
+      "description": "依年資給予特別休假，安久銀行內規提供優於勞基法最低標準之天數。",
+      "source_scope": [
+        "law",
+        "internal_policy"
+      ],
+      "risk_level": "low",
+      "default_answer_policy": "answer",
+      "related_law_articles": [
+        "勞動基準法第38條"
+      ],
+      "related_policy_articles": [
+        "安久銀行員工工作與福利規章辦法第11條",
+        "安久銀行員工工作與福利規章辦法第12條"
+      ],
+      "retrieval_keywords": [
+        "特休",
+        "年假",
+        "滿半年",
+        "滿一年",
+        "特休未休",
+        "優於法規"
+      ],
+      "graph_expansion_priority": "high",
+      "human_review_required_for_answers": false
+    },
+    {
+      "concept_id": "concept_sick_leave",
+      "node_type": "concept",
+      "label": "病假",
+      "category": "leave",
+      "parent_concept_id": "concept_leave",
+      "aliases": [
+        "請病假",
+        "生病請假",
+        "病假證明",
+        "診斷證明"
+      ],
+      "description": "員工因普通傷病需休養或就醫之假別。",
+      "source_scope": [
+        "internal_policy"
+      ],
+      "risk_level": "low",
+      "default_answer_policy": "answer",
+      "related_law_articles": [
+        "勞動基準法第43條"
+      ],
+      "related_policy_articles": [
+        "安久銀行員工工作與福利規章辦法第13條"
+      ],
+      "retrieval_keywords": [
+        "病假",
+        "診斷證明",
+        "連續2日",
+        "醫療證明"
+      ],
+      "graph_expansion_priority": "medium",
+      "human_review_required_for_answers": false
+    },
+    {
+      "concept_id": "concept_personal_leave",
+      "node_type": "concept",
+      "label": "事假",
+      "category": "leave",
+      "parent_concept_id": "concept_leave",
+      "aliases": [
+        "請事假",
+        "個人事務",
+        "臨時有事"
+      ],
+      "description": "員工因個人事務需親自處理之假別。",
+      "source_scope": [
+        "internal_policy"
+      ],
+      "risk_level": "low",
+      "default_answer_policy": "answer",
+      "related_law_articles": [
+        "勞動基準法第43條"
+      ],
+      "related_policy_articles": [
+        "安久銀行員工工作與福利規章辦法第14條"
+      ],
+      "retrieval_keywords": [
+        "事假",
+        "事前申請",
+        "主管核准",
+        "個人事務"
+      ],
+      "graph_expansion_priority": "medium",
+      "human_review_required_for_answers": false
+    },
+    {
+      "concept_id": "concept_family_care_leave",
+      "node_type": "concept",
+      "label": "家庭照顧與緊急照顧",
+      "category": "leave",
+      "parent_concept_id": "concept_leave",
+      "aliases": [
+        "家庭照顧假",
+        "照顧家人",
+        "緊急照顧",
+        "遠距辦公"
+      ],
+      "description": "家庭成員疾病、重大事故或緊急照顧需求之假勤與彈性措施。",
+      "source_scope": [
+        "internal_policy"
+      ],
+      "risk_level": "medium",
+      "default_answer_policy": "disclaimer",
+      "related_law_articles": [],
+      "related_policy_articles": [
+        "安久銀行員工工作與福利規章辦法第15條"
+      ],
+      "retrieval_keywords": [
+        "家庭照顧",
+        "緊急照顧",
+        "彈性上班",
+        "遠距辦公",
+        "臨時調班"
+      ],
+      "graph_expansion_priority": "medium",
+      "human_review_required_for_answers": false
+    },
+    {
+      "concept_id": "concept_statutory_leave",
+      "node_type": "concept",
+      "label": "其他法定假別",
+      "category": "leave",
+      "parent_concept_id": "concept_leave",
+      "aliases": [
+        "公假",
+        "婚假",
+        "喪假",
+        "產假",
+        "陪產假",
+        "生理假",
+        "育嬰留停"
+      ],
+      "description": "公假、婚假、喪假、產假、陪產檢及陪產假、生理假、育嬰留職停薪等假別。",
+      "source_scope": [
+        "law",
+        "internal_policy"
+      ],
+      "risk_level": "medium",
+      "default_answer_policy": "disclaimer",
+      "related_law_articles": [
+        "勞動基準法第43條"
+      ],
+      "related_policy_articles": [
+        "安久銀行員工工作與福利規章辦法第16條"
+      ],
+      "retrieval_keywords": [
+        "公假",
+        "婚假",
+        "喪假",
+        "產假",
+        "陪產假",
+        "生理假",
+        "育嬰留停"
+      ],
+      "graph_expansion_priority": "medium",
+      "human_review_required_for_answers": false
+    },
+    {
+      "concept_id": "concept_leave_dispute",
+      "node_type": "concept",
+      "label": "請假爭議",
+      "category": "leave",
+      "parent_concept_id": "concept_leave",
+      "aliases": [
+        "不給假",
+        "主管不准假",
+        "請假被拒",
+        "假別爭議",
+        "合法嗎"
+      ],
+      "description": "涉及假別認定、主管核准、薪資計算、證明文件或法律責任判斷之請假個案。",
+      "source_scope": [
+        "law",
+        "internal_policy"
+      ],
+      "risk_level": "high",
+      "default_answer_policy": "escalate",
+      "related_law_articles": [
+        "勞動基準法第43條"
+      ],
+      "related_policy_articles": [
+        "安久銀行員工工作與福利規章辦法第4條",
+        "安久銀行員工工作與福利規章辦法第17條"
+      ],
+      "retrieval_keywords": [
+        "主管不給假",
+        "請假爭議",
+        "不核准",
+        "法律責任",
+        "申訴"
+      ],
+      "graph_expansion_priority": "high",
+      "human_review_required_for_answers": true
+    },
+    {
+      "concept_id": "concept_overtime",
+      "node_type": "concept",
+      "label": "加班與延長工時",
+      "category": "overtime",
+      "parent_concept_id": "concept_hr_policy",
+      "aliases": [
+        "加班",
+        "延長工時",
+        "晚下班",
+        "超時工作"
+      ],
+      "description": "加班申請、延長工時限制、加班費、補休及加班審核責任。",
+      "source_scope": [
+        "law",
+        "internal_policy"
+      ],
+      "risk_level": "medium",
+      "default_answer_policy": "answer",
+      "related_law_articles": [
+        "勞動基準法第24條",
+        "勞動基準法第32條",
+        "勞動基準法第32-1條",
+        "勞動基準法第42條"
+      ],
+      "related_policy_articles": [
+        "安久銀行員工工作與福利規章辦法第18條",
+        "安久銀行員工工作與福利規章辦法第19條",
+        "安久銀行員工工作與福利規章辦法第20條",
+        "安久銀行員工工作與福利規章辦法第21條",
+        "安久銀行員工工作與福利規章辦法第22條"
+      ],
+      "retrieval_keywords": [
+        "加班",
+        "延長工時",
+        "加班申請",
+        "加班費",
+        "補休"
+      ],
+      "graph_expansion_priority": "high",
+      "human_review_required_for_answers": false
+    },
+    {
+      "concept_id": "concept_overtime_pay",
+      "node_type": "concept",
+      "label": "加班費",
+      "category": "overtime",
+      "parent_concept_id": "concept_overtime",
+      "aliases": [
+        "加班錢",
+        "加班費怎麼算",
+        "晚下班有錢嗎",
+        "加班廢"
+      ],
+      "description": "延長工時工資之計算方式，包括前 2 小時加給三分之一以上、再延長 2 小時加給三分之二以上。",
+      "source_scope": [
+        "law",
+        "internal_policy"
+      ],
+      "risk_level": "medium",
+      "default_answer_policy": "answer",
+      "related_law_articles": [
+        "勞動基準法第24條"
+      ],
+      "related_policy_articles": [
+        "安久銀行員工工作與福利規章辦法第20條",
+        "安久銀行員工工作與福利規章辦法第21條"
+      ],
+      "retrieval_keywords": [
+        "加班費",
+        "三分之一",
+        "三分之二",
+        "平日加班",
+        "休息日加班"
+      ],
+      "graph_expansion_priority": "high",
+      "human_review_required_for_answers": false
+    },
+    {
+      "concept_id": "concept_overtime_limit",
+      "node_type": "concept",
+      "label": "延長工時限制",
+      "category": "overtime",
+      "parent_concept_id": "concept_overtime",
+      "aliases": [
+        "加班上限",
+        "強迫加班",
+        "不能加班太久",
+        "延長工時上限"
+      ],
+      "description": "延長工時需符合每日、每月及每三個月限制，且不得以不當方式強制加班。",
+      "source_scope": [
+        "law",
+        "internal_policy"
+      ],
+      "risk_level": "high",
+      "default_answer_policy": "disclaimer",
+      "related_law_articles": [
+        "勞動基準法第32條",
+        "勞動基準法第42條"
+      ],
+      "related_policy_articles": [
+        "安久銀行員工工作與福利規章辦法第19條"
+      ],
+      "retrieval_keywords": [
+        "延長工時限制",
+        "加班上限",
+        "強迫加班",
+        "健康理由"
+      ],
+      "graph_expansion_priority": "high",
+      "human_review_required_for_answers": false
+    },
+    {
+      "concept_id": "concept_unreported_overtime",
+      "node_type": "concept",
+      "label": "未申報加班爭議",
+      "category": "overtime",
+      "parent_concept_id": "concept_overtime",
+      "aliases": [
+        "不讓我報加班",
+        "未申報加班",
+        "加班費少給",
+        "主管要求不申報"
+      ],
+      "description": "實際延長工作時間但未申報或主管要求不申報之高風險工時爭議。",
+      "source_scope": [
+        "law",
+        "internal_policy"
+      ],
+      "risk_level": "high",
+      "default_answer_policy": "escalate",
+      "related_law_articles": [
+        "勞動基準法第24條",
+        "勞動基準法第32條"
+      ],
+      "related_policy_articles": [
+        "安久銀行員工工作與福利規章辦法第21條",
+        "安久銀行員工工作與福利規章辦法第4條"
+      ],
+      "retrieval_keywords": [
+        "未申報加班",
+        "加班費疑義",
+        "工時紀錄不符",
+        "補登",
+        "申訴"
+      ],
+      "graph_expansion_priority": "high",
+      "human_review_required_for_answers": true
+    },
+    {
+      "concept_id": "concept_comp_time",
+      "node_type": "concept",
+      "label": "補休",
+      "category": "overtime",
+      "parent_concept_id": "concept_overtime",
+      "aliases": [
+        "加班換補休",
+        "補休",
+        "換休",
+        "補休時數"
+      ],
+      "description": "員工經核准延長工作時間或於休息日工作後，得依個人意願選擇加班費或補休。",
+      "source_scope": [
+        "law",
+        "internal_policy"
+      ],
+      "risk_level": "low",
+      "default_answer_policy": "answer",
+      "related_law_articles": [
+        "勞動基準法第32-1條"
+      ],
+      "related_policy_articles": [
+        "安久銀行員工工作與福利規章辦法第23條",
+        "安久銀行員工工作與福利規章辦法第24條",
+        "安久銀行員工工作與福利規章辦法第25條",
+        "安久銀行員工工作與福利規章辦法第26條",
+        "安久銀行員工工作與福利規章辦法第27條"
+      ],
+      "retrieval_keywords": [
+        "補休",
+        "加班換休",
+        "六個月",
+        "未休畢",
+        "發給工資"
+      ],
+      "graph_expansion_priority": "high",
+      "human_review_required_for_answers": false
+    },
+    {
+      "concept_id": "concept_salary",
+      "node_type": "concept",
+      "label": "薪資與工資",
+      "category": "salary",
+      "parent_concept_id": "concept_hr_policy",
+      "aliases": [
+        "薪水",
+        "薪資",
+        "工資",
+        "薪酬"
+      ],
+      "description": "薪資給付、薪資明細、工資清冊、扣款與薪資爭議。",
+      "source_scope": [
+        "law",
+        "internal_policy"
+      ],
+      "risk_level": "medium",
+      "default_answer_policy": "answer",
+      "related_law_articles": [
+        "勞動基準法第22條",
+        "勞動基準法第23條",
+        "勞動基準法第24條"
+      ],
+      "related_policy_articles": [
+        "安久銀行員工工作與福利規章辦法第34條",
+        "安久銀行員工工作與福利規章辦法第35條"
+      ],
+      "retrieval_keywords": [
+        "薪資",
+        "薪水",
+        "工資",
+        "薪資明細",
+        "扣款",
+        "薪酬窗口"
+      ],
+      "graph_expansion_priority": "high",
+      "human_review_required_for_answers": false
+    },
+    {
+      "concept_id": "concept_salary_deduction",
+      "node_type": "concept",
+      "label": "薪資扣款",
+      "category": "salary",
+      "parent_concept_id": "concept_salary",
+      "aliases": [
+        "扣薪",
+        "薪水被扣",
+        "預扣工資",
+        "賠償扣薪"
+      ],
+      "description": "不得任意預扣員工工資作為違約金或賠償費用；個案爭議需轉 HR。",
+      "source_scope": [
+        "law",
+        "internal_policy"
+      ],
+      "risk_level": "high",
+      "default_answer_policy": "escalate",
+      "related_law_articles": [
+        "勞動基準法第22條"
+      ],
+      "related_policy_articles": [
+        "安久銀行員工工作與福利規章辦法第35條",
+        "安久銀行員工工作與福利規章辦法第4條"
+      ],
+      "retrieval_keywords": [
+        "扣薪",
+        "薪資扣款",
+        "預扣工資",
+        "違約金",
+        "賠償費用",
+        "可以告嗎"
+      ],
+      "graph_expansion_priority": "high",
+      "human_review_required_for_answers": true
+    },
+    {
+      "concept_id": "concept_welfare",
+      "node_type": "concept",
+      "label": "福利制度",
+      "category": "welfare",
+      "parent_concept_id": "concept_hr_policy",
+      "aliases": [
+        "員工福利",
+        "福利",
+        "補助",
+        "福利辦法"
+      ],
+      "description": "健康檢查、旅遊補助、教育訓練、員工關懷、生日節慶與團隊福利。",
+      "source_scope": [
+        "internal_policy"
+      ],
+      "risk_level": "low",
+      "default_answer_policy": "answer",
+      "related_law_articles": [],
+      "related_policy_articles": [
+        "安久銀行員工工作與福利規章辦法第28條",
+        "安久銀行員工工作與福利規章辦法第29條",
+        "安久銀行員工工作與福利規章辦法第30條",
+        "安久銀行員工工作與福利規章辦法第31條",
+        "安久銀行員工工作與福利規章辦法第32條",
+        "安久銀行員工工作與福利規章辦法第33條"
+      ],
+      "retrieval_keywords": [
+        "福利",
+        "健康檢查",
+        "旅遊補助",
+        "教育訓練",
+        "證照補助",
+        "生日禮"
+      ],
+      "graph_expansion_priority": "medium",
+      "human_review_required_for_answers": false
+    },
+    {
+      "concept_id": "concept_privacy_sensitive",
+      "node_type": "concept",
+      "label": "個資與敏感資料",
+      "category": "privacy_sensitive",
+      "parent_concept_id": "concept_hr_policy",
+      "aliases": [
+        "個資",
+        "同事薪水",
+        "健康資料",
+        "薪資明細",
+        "病歷"
+      ],
+      "description": "員工個資、健康資訊、薪資明細、差勤與 HR 審核紀錄等敏感資料。",
+      "source_scope": [
+        "internal_policy"
+      ],
+      "risk_level": "high",
+      "default_answer_policy": "escalate",
+      "related_law_articles": [],
+      "related_policy_articles": [
+        "安久銀行員工工作與福利規章辦法第29條",
+        "安久銀行員工工作與福利規章辦法第36條",
+        "安久銀行員工工作與福利規章辦法第4條"
+      ],
+      "retrieval_keywords": [
+        "個資",
+        "同事薪水",
+        "健康檢查資料",
+        "敏感資料",
+        "非權責人員"
+      ],
+      "graph_expansion_priority": "high",
+      "human_review_required_for_answers": true
+    },
+    {
+      "concept_id": "concept_high_risk_hr_issue",
+      "node_type": "concept",
+      "label": "高風險 HR 問題",
+      "category": "high_risk",
+      "parent_concept_id": "concept_hr_policy",
+      "aliases": [
+        "申訴",
+        "法律責任",
+        "是否合法",
+        "可以告嗎",
+        "懲處",
+        "資遣",
+        "個案爭議"
+      ],
+      "description": "涉及申訴、懲處、資遣、個資、法律責任或主管爭議者，AI 不做個案最終認定。",
+      "source_scope": [
+        "internal_policy"
+      ],
+      "risk_level": "high",
+      "default_answer_policy": "escalate",
+      "related_law_articles": [],
+      "related_policy_articles": [
+        "安久銀行員工工作與福利規章辦法第4條",
+        "安久銀行員工工作與福利規章辦法第17條"
+      ],
+      "retrieval_keywords": [
+        "高風險",
+        "申訴",
+        "法律責任",
+        "是否合法",
+        "轉人工",
+        "法遵"
+      ],
+      "graph_expansion_priority": "high",
+      "human_review_required_for_answers": true
+    },
+    {
+      "concept_id": "concept_termination",
+      "node_type": "concept",
+      "label": "離職、資遣與契約終止",
+      "category": "termination",
+      "parent_concept_id": "concept_hr_policy",
+      "aliases": [
+        "資遣",
+        "解僱",
+        "離職",
+        "契約終止",
+        "非自願離職"
+      ],
+      "description": "涉及契約終止與資遣之問題屬高風險，AI 僅可說明一般規範並轉人工。",
+      "source_scope": [
+        "law",
+        "internal_policy"
+      ],
+      "risk_level": "high",
+      "default_answer_policy": "escalate",
+      "related_law_articles": [
+        "勞動基準法第16條"
+      ],
+      "related_policy_articles": [
+        "安久銀行員工工作與福利規章辦法第4條",
+        "安久銀行員工工作與福利規章辦法第26條"
+      ],
+      "retrieval_keywords": [
+        "資遣",
+        "解僱",
+        "離職",
+        "預告期間",
+        "契約終止",
+        "是否合法"
+      ],
+      "graph_expansion_priority": "high",
+      "human_review_required_for_answers": true
+    },
+    {
+      "concept_id": "concept_occupational_accident",
+      "node_type": "concept",
+      "label": "職業災害",
+      "category": "occupational_accident",
+      "parent_concept_id": "concept_hr_policy",
+      "aliases": [
+        "職災",
+        "工作受傷",
+        "職業災害",
+        "職災補償"
+      ],
+      "description": "工作受傷或職業災害相關補償與責任判斷屬高風險。",
+      "source_scope": [
+        "law",
+        "internal_policy"
+      ],
+      "risk_level": "high",
+      "default_answer_policy": "escalate",
+      "related_law_articles": [
+        "勞動基準法第59條"
+      ],
+      "related_policy_articles": [
+        "安久銀行員工工作與福利規章辦法第17條",
+        "安久銀行員工工作與福利規章辦法第32條"
+      ],
+      "retrieval_keywords": [
+        "職災",
+        "工作受傷",
+        "職業災害",
+        "補償",
+        "醫療"
+      ],
+      "graph_expansion_priority": "high",
+      "human_review_required_for_answers": true
+    }
+  ]
+}
