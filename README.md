@@ -16,8 +16,6 @@ HuggingFace LLM (no OpenAI API key required) intended for a Colab T4 GPU.
 .
 ├── src/
 │   └── hr_ai_graph_rag.py          # the full pipeline (single module)
-├── notebooks/
-│   └── 安久銀行_HR_AI_Graph_RAG_..._Colab.ipynb
 ├── data/
 │   ├── policies/                   # internal bank policy DOCX (simulated)
 │   ├── golden/                     # 50-question evaluation set
@@ -85,8 +83,9 @@ RERANKER_MODEL_NAME=cross-encoder/ms-marco-MiniLM-L-6-v2 \
 python tests/test_retrieval_rerank.py
 ```
 
-In **Google Colab**: open the notebook under `notebooks/`, choose a T4 GPU runtime,
-and upload the three input files when prompted (or set the env vars below).
+In **Google Colab**: choose a T4 GPU runtime, then `git clone` this repo and run
+`python src/hr_ai_graph_rag.py` (bundled `data/` is auto-discovered; set the env
+vars below to override inputs, and set `HF_TOKEN` for the gated Gemma model).
 
 The bundled `data/` files are auto-discovered when running from the repo. The official
 勞動基準法 DOCX is **not** bundled (it is an external legal source); if you don't supply
