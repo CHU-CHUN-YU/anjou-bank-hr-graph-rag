@@ -528,15 +528,18 @@ content: {c.get('content')[:max_chars]}
         if not USE_LLM:
             answer = self._fallback_answer(state, disclaimer=disclaimer)
         else:
-            system = """
+            n_src = min(6, len(state.get("retrieved_chunks", [])))
+            src_list = "、".join(f"[S{i}]" for i in range(1, n_src + 1)) or "（無可用來源）"
+            system = f"""
 你是安久銀行 HR AI 智能助理。
 你只能根據提供的 Retrieval Context 與 Graph Context 回答，不得自行編造資料。
-回答時必須：
-1. 優先使用 internal_policy，其次使用 law 作為最低標準。
-2. 必須引用來源，格式使用 [S1], [S2]。
-3. 若內規優於法規，請說明「內規 vs 法規」差異。
-4. 若是情境型問題，需加風險聲明。
-5. 不得做法律判定；高風險或個案爭議需建議洽 HR。
+回答規則：
+1. 優先使用 internal_policy，其次以 law 作為最低標準。
+2. 每一段只要用到來源，句末必須標註對應編號，格式 [S1]、[S2]；可用來源僅限：{src_list}。
+3. 直接在每個標題後填入「實際內容」，不要只列空白標題，也不要重印這份格式或規則說明。
+4. 至少要在「依據 Citation」與「白話說明」兩段標註來源編號。
+5. 若內規優於法規，請在「規範差異」段說明差異並各自標註來源。
+6. 情境型問題需加風險聲明；不得做法律判定，高風險或個案爭議建議洽 HR。
 """
             user = f"""
 員工問題：{state['question']}
@@ -548,7 +551,7 @@ Route: {state.get('route')}
 Retrieval / Graph Context:
 {context}
 
-請用以下格式回答：
+請直接在每個標題後填入內容（可同行或換行），每個有依據的段落都要標 [S#]：
 簡短結論：
 適用條件：
 依據 Citation：
@@ -557,7 +560,16 @@ Retrieval / Graph Context:
 注意事項 / 聲明：
 下一步建議：
 """
-            answer = call_llm_text(system, user, temperature=0.1) or self._fallback_answer(state, disclaimer=disclaimer)
+            answer = call_llm_text(system, user, temperature=0.1)
+            # Retry once if the model forgot to cite any [S#] source.
+            if answer and "[S" not in answer:
+                stage_log("generate_answer", "回答未標註 [S#]，以更嚴格指示重生一次")
+                retry_hint = "\n注意：上一次回答未標註任何 [S#] 來源，請重寫，並確保每個有依據的段落都標註 [S1]、[S2] 等來源編號，且不要重印格式標題。"
+                retry = call_llm_text(system + retry_hint, user, temperature=0.0)
+                if retry and "[S" in retry:
+                    answer = retry
+            if not answer:
+                answer = self._fallback_answer(state, disclaimer=disclaimer)
         citations = self._build_citations(state)
         stage_log(
             "generate_answer",
