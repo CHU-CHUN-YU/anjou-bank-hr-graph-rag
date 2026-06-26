@@ -15,7 +15,18 @@ HuggingFace LLM (no OpenAI API key required) intended for a Colab T4 GPU.
 ```
 .
 ├── src/
-│   └── hr_ai_graph_rag.py          # the full pipeline (single module)
+│   └── hr_ai_graph_rag/            # the pipeline, split into focused modules
+│       ├── config.py               #   env / models / global constants
+│       ├── utils.py                #   text · category · route helpers (no deps)
+│       ├── artifacts.py            #   offline LLM-assisted knowledge loader
+│       ├── ingestion.py            #   DOCX parse · chunking · HRKnowledgeBuilder
+│       ├── graph.py                #   HRKnowledgeGraph (生成圖)
+│       ├── retrieval.py            #   HybridRetriever — hybrid + rerank (排序)
+│       ├── llm.py                  #   LocalHFLLM + call_llm_* (本地生成模型)
+│       ├── workflow.py             #   HRAssistantGraph — LangGraph (對話)
+│       ├── evaluation.py           #   golden-set metrics
+│       ├── runner.py               #   I/O + main() entry point
+│       └── __main__.py             #   python -m hr_ai_graph_rag
 ├── data/
 │   ├── policies/                   # internal bank policy DOCX (simulated)
 │   ├── golden/                     # 50-question evaluation set
@@ -70,7 +81,7 @@ Expected: `ALL PASSED — 24 checks`.
 
 ```bash
 pip install -r requirements.txt
-bash scripts/run_local.sh        # or: python src/hr_ai_graph_rag.py
+bash scripts/run_local.sh        # or: PYTHONPATH=src python -m hr_ai_graph_rag
 ```
 
 To verify retrieval + the cross-encoder rerank stage in isolation (downloads models):
@@ -84,7 +95,7 @@ python tests/test_retrieval_rerank.py
 ```
 
 In **Google Colab**: choose a T4 GPU runtime, then `git clone` this repo and run
-`python src/hr_ai_graph_rag.py` (bundled `data/` is auto-discovered; set the env
+`PYTHONPATH=src python -m hr_ai_graph_rag` (bundled `data/` is auto-discovered; set the env
 vars below to override inputs, and set `HF_TOKEN` for the gated Gemma model).
 
 The bundled `data/` files are auto-discovered when running from the repo. The official
@@ -115,8 +126,12 @@ one, a built-in sample of key articles is used so the pipeline still runs end-to
 
 ## Notes
 
-- `import hr_ai_graph_rag` is side-effect free; the full pipeline runs only via
-  `python src/hr_ai_graph_rag.py`, `%run`, or in Colab.
+- `import hr_ai_graph_rag` loads no heavy deps and runs no pipeline (it only prints a
+  config summary); the full pipeline runs via `PYTHONPATH=src python -m hr_ai_graph_rag`,
+  `runner.main()`, or in Colab.
+- The package re-exports every public symbol at the top level, so `import hr_ai_graph_rag
+  as hr` keeps the flat `hr.HRAssistantGraph`, `hr.main`, … interface — submodules
+  (`config`/`utils`/`graph`/`retrieval`/`workflow`/…) are an internal detail.
 - Heavy deps (torch, faiss, sentence-transformers, transformers, langgraph) are imported
   lazily, so the data/parse/graph/eval layers work with just `requirements-core.txt`.
 - See `docs/README_RUNTIME_PATTERN_REWRITE.md` for the original (Chinese) design notes.

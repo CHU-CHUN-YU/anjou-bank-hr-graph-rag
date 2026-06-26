@@ -11,4 +11,4 @@ cd "$(dirname "$0")/.."
 # export OFFLINE_ARTIFACT_DIR=data/hr_offline_artifacts
 # export USE_LOCAL_LLM_FOR_QUERY_UNDERSTANDING=true
 
-python src/hr_ai_graph_rag.py
+PYTHONPATH=src python -m hr_ai_graph_rag
