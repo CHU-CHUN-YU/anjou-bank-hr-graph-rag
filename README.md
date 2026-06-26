@@ -158,4 +158,6 @@ one, a built-in sample of key articles is used so the pipeline still runs end-to
   Colab, gitignored): knowledge-graph `kg_nodes.csv` / `kg_edges.csv` /
   `hr_knowledge_graph.gexf`, chunks, evaluation detail + summary, `feedback_log.csv`,
   and a bundled ZIP (auto-downloaded in Colab).
+- See `docs/WORKFLOW.md` for a very detailed (Chinese) walkthrough of the whole
+  pipeline and the per-question LangGraph workflow.
 - See `docs/README_RUNTIME_PATTERN_REWRITE.md` for the original (Chinese) design notes.
