@@ -137,6 +137,8 @@ one, a built-in sample of key articles is used so the pipeline still runs end-to
 | `LOAD_PENDING_GRAPH_EDGES` | `false` | Load only HR-approved graph edges |
 | `STAGE_LOG` | `true` | Print a `[STAGE]` line per pipeline step (what each stage output) |
 | `STAGE_LOG_PREVIEW` | `160` | Max chars of the per-stage content preview |
+| `RUN_LOG` | `true` | Tee all console output (prints + `[STAGE]`) to a log file |
+| `RUN_LOG_FILE` | `OUTPUT_DIR/run_log.txt` | Path of the saved run log |
 
 > The default `Qwen/Qwen2.5-1.5B-Instruct` is **not gated** — no HuggingFace token or
 > license acceptance is needed. If you switch `HF_LLM_MODEL_NAME` to a gated model (e.g.

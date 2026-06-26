@@ -203,7 +203,48 @@ def save_outputs(output_dir: Path, articles, chunks, kg: HRKnowledgeGraph, demo_
     return zip_path
 
 
+class _Tee:
+    """Duplicate a stream to several sinks (console + log file)."""
+    def __init__(self, *streams):
+        self.streams = streams
+    def write(self, data):
+        for s in self.streams:
+            try:
+                s.write(data)
+                s.flush()
+            except Exception:
+                pass
+    def flush(self):
+        for s in self.streams:
+            try:
+                s.flush()
+            except Exception:
+                pass
+
+
 def main():
+    """Run the pipeline, teeing all console output to a log file.
+
+    The log is written to RUN_LOG_FILE (default OUTPUT_DIR/run_log.txt) in addition to
+    the console, so every [STAGE] line and print is captured. Set RUN_LOG=false to skip.
+    """
+    if os.getenv("RUN_LOG", "true").lower() != "true":
+        return _main()
+    log_path = Path(os.getenv("RUN_LOG_FILE", str(OUTPUT_DIR / "run_log.txt")))
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    fh = open(log_path, "w", encoding="utf-8")
+    orig_out, orig_err = sys.stdout, sys.stderr
+    sys.stdout, sys.stderr = _Tee(orig_out, fh), _Tee(orig_err, fh)
+    try:
+        print(f"[run-log] capturing console output → {log_path}")
+        return _main()
+    finally:
+        sys.stdout, sys.stderr = orig_out, orig_err
+        fh.close()
+        print(f"[run-log] saved console log → {log_path}")
+
+
+def _main():
     labor_docx_path, policy_docx_path, golden_json_path = prepare_input_files()
     print("Labor Law DOCX path:", labor_docx_path)
     print("Internal Policy DOCX path:", policy_docx_path)
