@@ -175,20 +175,20 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent if "__file__" in globa
 REPO_DATA_DIR = REPO_ROOT / "data"
 
 # Optional: you may set these paths manually before running the script/notebook.
-# If left blank in Colab, the script will ask you to upload three files:
-# 1) 勞動基準法 DOCX, 2) 模擬銀行內規 DOCX, 3) Golden Dataset JSON.
-# Outside Colab, paths default to the bundled files under <repo>/data when present.
+# The internal-policy DOCX, golden JSON and offline artifacts are bundled under
+# <repo>/data and auto-discovered whenever they exist — including in Colab, since the
+# repo is cloned with its data. (The official 勞動基準法 DOCX is NOT bundled; set
+# LABOR_LAW_DOCX_PATH to supply one, otherwise a built-in sample is used.)
 LABOR_LAW_DOCX_PATH = os.getenv("LABOR_LAW_DOCX_PATH", "").strip()
 INTERNAL_POLICY_DOCX_PATH = os.getenv("INTERNAL_POLICY_DOCX_PATH", "").strip()
 GOLDEN_DATASET_JSON_PATH = os.getenv("GOLDEN_DATASET_JSON_PATH", "").strip()
 
-if not IN_COLAB:
-    _bundled_policy = REPO_DATA_DIR / "policies" / "安久銀行員工工作與福利規章辦法_模擬版.docx"
-    _bundled_golden = REPO_DATA_DIR / "golden" / "anjou_bank_hr_ai_golden_dataset_50.json"
-    if not INTERNAL_POLICY_DOCX_PATH and _bundled_policy.exists():
-        INTERNAL_POLICY_DOCX_PATH = str(_bundled_policy)
-    if not GOLDEN_DATASET_JSON_PATH and _bundled_golden.exists():
-        GOLDEN_DATASET_JSON_PATH = str(_bundled_golden)
+_bundled_policy = REPO_DATA_DIR / "policies" / "安久銀行員工工作與福利規章辦法_模擬版.docx"
+_bundled_golden = REPO_DATA_DIR / "golden" / "anjou_bank_hr_ai_golden_dataset_50.json"
+if not INTERNAL_POLICY_DOCX_PATH and _bundled_policy.exists():
+    INTERNAL_POLICY_DOCX_PATH = str(_bundled_policy)
+if not GOLDEN_DATASET_JSON_PATH and _bundled_golden.exists():
+    GOLDEN_DATASET_JSON_PATH = str(_bundled_golden)
 
 # Offline artifacts can be provided as a folder or a ZIP file.
 # Recommended files inside the folder/ZIP:
@@ -197,7 +197,7 @@ if not IN_COLAB:
 OFFLINE_ARTIFACT_DIR = os.getenv("OFFLINE_ARTIFACT_DIR", "").strip()
 OFFLINE_ARTIFACT_ZIP_PATH = os.getenv("OFFLINE_ARTIFACT_ZIP_PATH", "").strip()
 
-if not IN_COLAB and not OFFLINE_ARTIFACT_DIR:
+if not OFFLINE_ARTIFACT_DIR:
     _bundled_artifacts = REPO_DATA_DIR / "hr_offline_artifacts"
     if (_bundled_artifacts / "concept_nodes.json").exists():
         OFFLINE_ARTIFACT_DIR = str(_bundled_artifacts)

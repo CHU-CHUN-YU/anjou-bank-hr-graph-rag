@@ -50,49 +50,61 @@ def _identify_uploaded_files(uploaded_names: List[str]) -> Tuple[Optional[str], 
     return law_docx, policy_docx, golden_json
 
 
-def prepare_input_files() -> Tuple[str, str, str]:
-    """Resolve or upload the three required user-provided files.
+def _has_interactive_kernel() -> bool:
+    """True only inside a live IPython/Colab kernel (a notebook cell).
 
-    Required:
-    1. 勞動基準法 DOCX
-    2. 模擬銀行內規 DOCX
-    3. Golden Dataset JSON
+    `files.upload()` needs the live kernel; running `python -m hr_ai_graph_rag` as a
+    subprocess has no kernel, so we must detect this and skip the upload path instead
+    of crashing on get_ipython().kernel.
+    """
+    try:
+        from IPython import get_ipython
+        ip = get_ipython()
+        return ip is not None and getattr(ip, "kernel", None) is not None
+    except Exception:
+        return False
+
+
+def prepare_input_files() -> Tuple[str, str, str]:
+    """Resolve the three required input files.
+
+    1. 勞動基準法 DOCX   — NOT bundled; a built-in sample is used unless LABOR_LAW_DOCX_PATH
+                           is set (an official copy is an external legal source).
+    2. 模擬銀行內規 DOCX — bundled under data/, auto-discovered (see config).
+    3. Golden Dataset JSON — bundled under data/, auto-discovered (see config).
+
+    Interactive upload is attempted ONLY when a file is still missing AND a live notebook
+    kernel exists, so `python -m hr_ai_graph_rag` works headlessly on the bundled data.
     """
     law_docx = _resolve_existing_path(LABOR_LAW_DOCX_PATH)
     policy_docx = _resolve_existing_path(INTERNAL_POLICY_DOCX_PATH)
     golden_json = _resolve_existing_path(GOLDEN_DATASET_JSON_PATH)
 
-    if law_docx and policy_docx and golden_json:
-        return law_docx, policy_docx, golden_json
+    # If policy/golden are still unset, scan the working dir (and /mnt/data) for them.
+    if not (policy_docx and golden_json):
+        candidates = list(Path(".").glob("*"))
+        if Path("/mnt/data").exists():
+            candidates += list(Path("/mnt/data").glob("*"))
+        ulaw, upolicy, ugolden = _identify_uploaded_files([str(p) for p in candidates])
+        law_docx = law_docx or _resolve_existing_path(ulaw or "")
+        policy_docx = policy_docx or _resolve_existing_path(upolicy or "")
+        golden_json = golden_json or _resolve_existing_path(ugolden or "")
 
-    if IN_COLAB:
-        print("請一次上傳三個檔案：")
-        print("1) 勞動基準法 DOCX")
-        print("2) 模擬銀行員工內部規章 DOCX")
-        print("3) Golden Dataset JSON")
+    # Interactive upload only when genuinely missing AND a live kernel is available.
+    if not (policy_docx and golden_json) and _has_interactive_kernel():
+        print("請上傳缺少的檔案（模擬銀行內規 DOCX / Golden JSON，必要時含勞基法 DOCX）：")
         uploaded = files.upload()
         ulaw, upolicy, ugolden = _identify_uploaded_files(list(uploaded.keys()))
         law_docx = law_docx or ulaw
         policy_docx = policy_docx or upolicy
         golden_json = golden_json or ugolden
-    else:
-        # Local convenience: search current directory and /mnt/data if paths are not set.
-        candidates = list(Path(".").glob("*")) + list(Path("/mnt/data").glob("*"))
-        names = [str(p) for p in candidates]
-        ulaw, upolicy, ugolden = _identify_uploaded_files(names)
-        law_docx = law_docx or ulaw
-        policy_docx = policy_docx or upolicy
-        golden_json = golden_json or ugolden
 
-        # The repo ships the internal policy DOCX + golden JSON but not the official
-        # 勞動基準法 DOCX (that is an external legal source). For a zero-config local
-        # run, fall back to the built-in sample labor-law DOCX so the pipeline can run
-        # end-to-end. Provide a real 勞動基準法 DOCX via LABOR_LAW_DOCX_PATH for production.
-        if not (law_docx and Path(law_docx).exists()):
-            sample_path = str(OUTPUT_DIR / "參考資料_勞動基準法_sample.docx")
-            print("未提供勞動基準法 DOCX，改用內建 sample 條文 ->", sample_path)
-            create_sample_labor_law_docx(sample_path)
-            law_docx = sample_path
+    # 勞動基準法 DOCX is never bundled -> fall back to the built-in sample (any environment).
+    if not (law_docx and Path(law_docx).exists()):
+        sample_path = str(OUTPUT_DIR / "參考資料_勞動基準法_sample.docx")
+        print("未提供勞動基準法 DOCX，改用內建 sample 條文 ->", sample_path)
+        create_sample_labor_law_docx(sample_path)
+        law_docx = sample_path
 
     missing = []
     if not law_docx or not Path(law_docx).exists():
@@ -102,7 +114,11 @@ def prepare_input_files() -> Tuple[str, str, str]:
     if not golden_json or not Path(golden_json).exists():
         missing.append("Golden Dataset JSON")
     if missing:
-        raise FileNotFoundError("缺少必要檔案：" + ", ".join(missing) + "。請上傳或設定環境變數 LABOR_LAW_DOCX_PATH / INTERNAL_POLICY_DOCX_PATH / GOLDEN_DATASET_JSON_PATH。")
+        raise FileNotFoundError(
+            "缺少必要檔案：" + ", ".join(missing)
+            + "。請設定環境變數 LABOR_LAW_DOCX_PATH / INTERNAL_POLICY_DOCX_PATH / "
+            "GOLDEN_DATASET_JSON_PATH,或在互動 notebook cell 中執行以便上傳。"
+        )
 
     return str(law_docx), str(policy_docx), str(golden_json)
 
