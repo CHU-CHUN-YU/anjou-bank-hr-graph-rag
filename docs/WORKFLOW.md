@@ -413,4 +413,186 @@ PYTHONPATH=src python -m hr_ai_graph_rag
 4. **生成必須有依據**:只依檢索 context、強制引用、不得編造、不做法律判定。
 5. **內規優於法規最低標準**:從 priority 加權到 prompt 規則一以貫之。
 6. **可觀測、可稽核**:每階段有日誌,圖/檢索/評估結果全部存檔。
+
+---
+
+# 附錄 A:Prompt 完整內容與 Context Engineering
+
+本附錄逐字列出兩個業務 prompt 的 system / user 內容,並說明「context 怎麼被組裝、限制、注入」的工程細節。
+
+## A1. Query Understanding Prompt(`_llm_runtime_understanding`,`call_llm_json`)
+
+### system prompt(逐字)
+```
+你是銀行 HR AI 助理的 Runtime Query Understanding 模組。
+你的任務是做 structured classification，不是回答問題。
+請根據 concept taxonomy、query pattern schema 與 risk policy，判斷使用者問題的 category、intent、matched_concepts、matched_query_pattern_ids、是否模糊、missing_slots、candidate risk。
+你可以做口語/錯字 normalization，也可以提供 optional_rewrite_terms，但不得自行創造法條號或內規條號；法條/內規條號會由 offline rewrite_rules 提供。
+重要：risk_level / recommended_route 只是 signal，最終路由會由 deterministic guardrails 決定。
+只能輸出 valid JSON，不要 markdown，不要解釋。
+```
+> 再經包裝層 `call_llm_json` 在尾端追加一句:`請只輸出 valid JSON，不要輸出 markdown。`,並用 temperature=0.0、max_new_tokens=384 呼叫。
+
+### user prompt(模板;`{}` 為執行時填入)
+```
+使用者問題：{question}
+
+可用 categories：general, working_hours, attendance, leave, overtime, salary, welfare, termination, occupational_accident, privacy_sensitive, high_risk, governance
+可用 answer_policy：direct, with_disclaimer, clarify, escalate
+可用 relation types：has_rule, related_to, refers_to, supplements, overrides, parent_of, child_of
+
+Offline concept taxonomy（節錄）：
+{concepts_for_prompt JSON}
+
+Offline query patterns（節錄）：
+{patterns_for_prompt JSON}
+
+Offline risk policies（節錄）：
+{risk_for_prompt JSON}
+
+Heuristic baseline：
+{base JSON}
+
+請輸出 JSON schema：
+{ intent, category, matched_concepts[], matched_query_pattern_ids[],
+  is_ambiguous, missing_slots[], normalized_query, risk_level,
+  risk_reasons[], answer_policy, recommended_route,
+  preferred_relations[], optional_rewrite_terms[], confidence }
+```
+
+### Context engineering 細節(這個 prompt)
+1. **受控選項注入**:把離線知識當「白名單」放進 user prompt,讓 LLM 只能在範圍內分類,而不是自由發揮:
+   - `concepts_for_prompt`:概念表**最多 80 個**,每個只保留 concept_id / label / category / **aliases(最多 6 個)** / risk_level / default_answer_policy。
+   - `risk_for_prompt`:風險政策**最多 40 個**,每個只留 id / category / risk_level / **trigger_phrases(最多 8 個)** / default_route。
+   - `patterns_for_prompt`:查詢樣式**最多 40 個**,每個留 pattern_id / type / category / **examples(最多 6 個)** / missing_slots / default_route。
+   - 這些「上限」是**刻意的 token 預算控制**:避免把整個 artifact 塞爆 context window。
+2. **Heuristic baseline 注入**:把規則層算好的 `base`(category/intent/risk/policy…)也放進 prompt,讓 LLM 是在「修正既有判斷」而非「從零猜」,提升穩定度。
+3. **明確禁令**:system 寫死「不得自行創造法條號/內規條號」「risk 只是 signal」「只輸出 JSON」——這是把「LLM 不做主」的原則寫進 prompt。
+4. **輸出後的受控合併**(`_llm_runtime_understanding` 第 309–354 行)是 context engineering 的下半場,規則:
+   - category / intent / matched_concepts / pattern_ids / normalized_query / preferred_relations:**可採用** LLM 的值(各有數量上限,如 concepts 最多 8 個)。
+   - missing_slots:LLM 與 heuristic **取聯集**(只增不減)。
+   - **risk 只升不降**:把 policy 對應成 route,用優先序 `answer<disclaimer<clarify<escalate` 比較,只有 LLM 提議的 route **≥** 目前 route 才採用;**LLM 想把高風險降成 direct 會被拒絕**。
+   - `is_ambiguous=true` → 直接設 clarify。
+   - risk 訊號全部存進 `llm_risk_signal`(供 guardrails 參考,但不直接決定)。
+   - optional_rewrite_terms 最多 5 個,且**不得是條號**,只當語意補充詞。
+
+## A2. Answer Generation Prompt(`_node_generate_answer`,`call_llm_text`)
+
+### system prompt(逐字)
+```
+你是安久銀行 HR AI 智能助理。
+你只能根據提供的 Retrieval Context 與 Graph Context 回答，不得自行編造資料。
+回答時必須：
+1. 優先使用 internal_policy，其次使用 law 作為最低標準。
+2. 必須引用來源，格式使用 [S1], [S2]。
+3. 若內規優於法規，請說明「內規 vs 法規」差異。
+4. 若是情境型問題，需加風險聲明。
+5. 不得做法律判定；高風險或個案爭議需建議洽 HR。
+```
+
+### user prompt(模板)
+```
+員工問題：{question}
+Intent: {intent}
+Category: {category}
+Risk: {risk_level}
+Route: {route}
+
+Retrieval / Graph Context:
+{context}      ← 由 _make_context 組裝(見下)
+
+請用以下格式回答：
+簡短結論：
+適用條件：
+依據 Citation：
+規範差異（內規 vs 法規，如有）：
+白話說明：
+注意事項 / 聲明：
+下一步建議：
+```
+> 用 temperature=0.1 呼叫;LLM 失敗或 `USE_LLM=false` 時改用 `_fallback_answer` 模板。
+
+### Context engineering 細節(`_make_context`)
+生成時的 `{context}` 是這樣組出來的:
+1. **取前 6 個** `retrieved_chunks`(已是混合檢索+rerank 後的順序),每個組成一個 `[S{i}]` 區塊,欄位包含:`chunk_type / source_type / document / article_no / title / category / priority / content`,其中 **content 截斷到 900 字**。
+2. 區塊之間以 `\n\n---\n\n` 分隔,**讓 LLM 能用 `[S1]…[S6]` 對齊引用**(引用編號 = chunk 在 context 裡的順位)。
+3. 在最後**附上圖 context**:`graph_context.context`(即 §7 Step 3 組出的 `[Graph Nodes]` / `[Graph Relations]` 文字),標題為 `[Graph-enhanced Context]`,**截斷到 2500 字**。
+4. `_build_citations` 另外產生結構化引用清單(前 6 個 chunk 的 source_id / 條號 / 來源 / 分數 / 內容預覽),存進 `state["citations"]`,供顯示與評估比對。
+
+### 為何這樣設計(context engineering 思路)
+- **編號對齊**:context 用 `[S1..S6]`、prompt 規則要求「必須用 [S#] 引用」、citations 也用同樣 source_id —— 三者對齊,才能在 faithfulness_check 驗證「答案是否真的引用了檢索到的來源」。
+- **長度上限**:chunk content 900 字、graph context 2500 字,是 1.5B 小模型 context window 與生成品質的折衷。
+- **欄位即訊號**:把 source_type / priority / category 一起放進 context,讓 LLM 知道「哪些是內規(優先)、哪些是法規(最低標準)」,呼應 system 規則第 1、3 條。
+- **格式強約束**:固定 7 段回答格式,讓輸出可預期、好稽核,也逼模型分開「結論 / 依據 / 內規 vs 法規差異 / 聲明」。
+
+## A3. 兩個包裝層回顧
+- **JSON 強制層**(`call_llm_json`):僅 Prompt ① 經過,追加「只輸出 JSON」、temperature=0,回傳後用 regex 抽 JSON,失敗回 default。
+- **Chat template 組裝層**(`_format_messages`):兩個 prompt 都經過;先試 `[{system},{user}]`,模型不收 system 角色就**合併進 user**,沒有 chat_template 的模型用 `System/User/Assistant` 純文字。
+
+---
+
+# 附錄 B:知識圖譜建置原理詳解
+
+本附錄說明「圖是怎麼從原始 DOCX 與 artifacts 長出來的」,以及執行時擴展的走訪原理。
+
+## B1. 節點與邊的三個來源
+知識圖的素材來自三條獨立管道,在 `_build_graph` 匯流:
+
+| 來源 | 產生什麼 | 在哪 |
+|---|---|---|
+| **DOCX 條文解析** | `law_article` / `internal_policy_article` 節點;條文內參照的 `refers_to`、`overrides`/`refers_to` 邊 | `ingestion.parse_*_articles` |
+| **concept_nodes artifact** | `concept` 節點;`parent_of`/`child_of`;概念↔條文 `has_rule`/`related_to` | `graph._add_concept_nodes` / `_add_concept_article_edges` |
+| **graph_relation_candidates artifact** | 額外的、人工核准過的條文間關係邊(`overrides`/`supplements`…) | `graph._add_artifact_edge_candidates` |
+
+## B2. 條文解析如何生出「圖的素材」(`ingestion.py`)
+- **法規(`parse_labor_law_articles`)**:用 `CHAPTER_PATTERN` / `ARTICLE_PATTERN` 切章節與條文,產生 `source_type="law"`、`priority=1`、`related_articles=[]` 的條文記錄。法規本身不主動連出邊(它是「被引用」的最低標準)。
+- **內規(`parse_internal_policy_articles`)**:是**圖關係的主要來源**。每條內規 `flush()` 時:
+  1. `extract_related_law_ids(content)`:用正則從內規條文裡抓「勞動基準法…第 X 條」,轉成對應的 **law article_id**,存進 `related_articles`。
+  2. 對每個 related law id,用 `relation_from_policy_content(content)` 決定關係型別:
+     - 內容含「優於 / 較有利 / 不低於 / 最低標準」→ **`overrides`**(內規優於法規);
+     - 否則 → **`refers_to`**(僅參照)。
+  3. 組成 `graph_edges = [(relation, law_id), …]`,連同 `priority=2` 一起存進條文記錄。
+- 之後 `_build_graph` 第 2 步就把這些 `related_articles`(refers_to)與 `graph_edges`(overrides/refers_to)實際加到圖上。**這就是「內規 overrides 法規」這條關鍵邊的真正出處。**
+- 解析失敗(非條文格式)時有 fallback:用 900 字、120 重疊的固定切塊,仍盡量抓 related law ids。
+
+## B3. 條號正規化與比對(把文字對應到圖節點的關鍵)
+圖能不能正確連邊,取決於「能不能把各種寫法的條號對應到同一個節點」。三段機制:
+1. **`article_id_from_no(source_type, article_no)`**:把「第 38 條」正規化成穩定 id,如 `law_38`、`policy_11`(「之」轉 `_`)。節點 id 與引用都用它,確保一致。
+2. **`_build_article_no_lookup`**:建一張 `(source_type, 正規化條號) → article_id` 的查表,並額外建 `("any", 條號)` 的萬用對應。
+3. **`_resolve_article_ref(ref, preferred_source)`**:三段式解析,把「任何形式的條文參照」對應到圖節點:
+   - 直接就是 article_id → 用它;
+   - 形如 `policy_article_11` / `law_article_38` → 轉來源+條號查表;
+   - 人類可讀的「勞動基準法第38條 / 安久銀行…第11條」→ 用 `extract_article_refs` 抓條號,並依字串含「勞動基準法/安久銀行/內規」決定 preferred source,再查表。
+   - 這支函式是 concept↔article 與 artifact 候選邊「**端點對齊**」的核心。
+
+## B4. 建圖四步(`_build_graph`)與每步的邊
+1. **概念節點**:對每個 concept_node 建 `concept` 節點(帶 label/category/risk_level/aliases/graph_expansion_priority…);有 `parent_concept_id` 就雙向加 `parent_of` / `child_of`。無 artifact 時用 8 個內建概念骨架。
+2. **條文節點 + 文件內邊**:把每條 article 加成節點;加 `related_articles` 的 `refers_to`;加 `graph_edges`(內規→法規的 overrides/refers_to)。
+3. **概念↔條文邊**:對每個概念,把 `related_law_articles` / `related_policy_articles` 經 `_resolve_article_ref` 對應到條文節點,雙向加 `has_rule`(概念→條文)與 `related_to`(條文→概念)。無 concept artifact 時用 category 對應的 fallback 邊。
+4. **artifact 候選邊**:從 `graph_relation_candidates` 載入額外關係,但有**雙重把關**(見 B6)。
+
+## B5. relation 型別語意
+| relation | 意義 |
+|---|---|
+| `overrides` | 內規優於法規最低標準(最有價值的差異關係) |
+| `supplements` | 內規補充法規 |
+| `has_rule` / `related_to` | 概念 ↔ 條文的雙向關聯 |
+| `refers_to` | 條文參照另一條文 |
+| `parent_of` / `child_of` | 概念階層 |
+
+## B6. 圖治理(為什麼可信)
+- **只載已核准邊**:`_add_artifact_edge_candidates` 預設只收 `review_status=="approved"` 的候選邊;未核准(pending)的**不載入**,除非設 `LOAD_PENDING_GRAPH_EDGES=true`。
+- **relation 白名單**:候選邊的 relation 必須在 `relation_schema` 標記為 `runtime_expandable` 的集合內(否則用內建白名單),不在白名單的關係被丟棄。
+- **端點必須存在**:來源/目標都得能對應到圖中既有節點才加邊。
+- **保留稽核欄位**:邊上存 `evidence`、`confidence`、`review_status`、`human_review_required`,可事後追溯。
+- 這些機制讓圖是「**人工治理過的可信關係**」,而非 LLM 即興產生。
+
+## B7. 執行時擴展的走訪原理(`expand`)
+- **觸發條件**:問題含「差 / 比較 / 為什麼 / 內規 / 法規 / 公司 / 優於 / 補休 / 依據 / 哪個 / 關係」才啟用圖(否則回空,避免雜訊)——因為只有「比較/關聯型」問題才需要圖。
+- **走訪**:以 rerank 後 top chunks 的條文為種子,沿 **successors + predecessors(雙向)** 走 `hops=1`,最多 `max_nodes=14` 個節點(BFS,達上限即停)。
+- **關係過濾**:若上游 LLM 給了 `preferred_relations`,**只保留**這些關係的邊(其餘鄰居跳過);沒給就全收。這是 LLM 唯一能影響圖的方式——**只能「偏好」,不能「新增」**。
+- **產出**:節點(node_type/label/條號/來源/類別/風險/content 前 500 字)+ 邊(source/relation/target/evidence)+ 組好的文字 context,回傳並注入生成 prompt(見 A2)。
+
+## B8. 一句話總結圖譜原理
+**節點來自「解析後的條文 + 概念 artifact」,邊主要來自「內規條文裡對法規的引用(overrides/refers_to)+ 概念對應 + 人工核准的候選邊」;靠條號正規化與三段式 `_resolve_article_ref` 對齊端點;只載核准邊、relation 白名單把關;執行時針對比較型問題做 1-hop 雙向擴展,LLM 只能偏好關係、不能改圖。**
 ```
