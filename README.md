@@ -159,8 +159,9 @@ one, a built-in sample of key articles is used so the pipeline still runs end-to
   lazily, so the data/parse/graph/eval layers work with just `requirements-core.txt`.
 - A full run writes to `OUTPUT_DIR` (`./hr_ai_graph_rag_outputs`, or `/content/...` in
   Colab, gitignored): knowledge-graph `kg_nodes.csv` / `kg_edges.csv` /
-  `hr_knowledge_graph.gexf`, chunks, evaluation detail + summary, `feedback_log.csv`,
-  and a bundled ZIP (auto-downloaded in Colab).
+  `hr_knowledge_graph.gexf`, chunks, evaluation detail + summary,
+  `evaluation_records.json` (every question's **full answer + full reference sources**),
+  `feedback_log.csv`, the run log, and a bundled ZIP (auto-downloaded in Colab).
 - See `docs/WORKFLOW.md` for a very detailed (Chinese) walkthrough of the whole
   pipeline and the per-question LangGraph workflow.
 - See `docs/README_RUNTIME_PATTERN_REWRITE.md` for the original (Chinese) design notes.

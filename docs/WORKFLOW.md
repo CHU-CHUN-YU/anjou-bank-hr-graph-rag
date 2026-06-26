@@ -362,7 +362,9 @@ final_score = 0.7·rerank_norm + 0.3·hybrid_score   # RERANK_WEIGHT=0.7
 
 - `articles.json`、`chunks_3layer_faq.json` / `.csv`、`demo_results.json`
 - `kg_nodes.csv`、`kg_edges.csv`、`hr_knowledge_graph.gexf`(可用 Gephi 開)
-- `golden_dataset.csv`、`evaluation_detail.csv`、`evaluation_summary.csv`
+- `golden_dataset.csv`、`evaluation_detail.csv`(含每題 `answer_full` + `citations_json`)、`evaluation_summary.csv`
+- `evaluation_records.json`(彙總:每題**完整答案 + 完整參考來源** + summary)
+- `evaluation_records/<id>.json`(每題各一個 JSON,完整答案 + 完整來源)
 - `feedback_log.csv`、`loaded_offline_artifacts.json`、產出說明 `README.md`
 - 全部打包成 `hr_ai_graph_rag_outputs.zip`(Colab 會自動下載)
 

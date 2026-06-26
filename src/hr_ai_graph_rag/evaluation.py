@@ -90,6 +90,7 @@ def source_type_hit(expected_source_type: Any, citations: List[Dict[str, Any]]) 
 
 def evaluate_assistant(assistant: HRAssistantGraph, golden_df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
     rows = []
+    records = []  # full structured per-question records (complete answer + citations)
     for _, row in tqdm(golden_df.iterrows(), total=len(golden_df), desc="Evaluating"):
         q = row["question"]
         start = time.time()
@@ -125,8 +126,32 @@ def evaluate_assistant(assistant: HRAssistantGraph, golden_df: pd.DataFrame) -> 
             "faithfulness_score": result.get("faithfulness_score"),
             "latency_sec": round(latency, 3),
             "answer_preview": result.get("answer", "")[:240],
+            "answer_full": result.get("answer", ""),
+            "citations_json": safe_json_dumps(citations),
+        })
+        records.append({
+            "id": row.get("id"),
+            "question_type": row.get("question_type"),
+            "test_dimension": row.get("test_dimension"),
+            "question": q,
+            "expected_category": expected_category,
+            "actual_category": result.get("category"),
+            "category_correct": category_correct,
+            "expected_route": expected_route,
+            "actual_route": result.get("route"),
+            "route_correct": route_correct,
+            "risk_level": result.get("risk_level"),
+            "confidence": result.get("confidence"),
+            "faithfulness_score": result.get("faithfulness_score"),
+            "retrieval_hit": retrieval_hit,
+            "source_type_hit": src_hit,
+            "citation_present": citation_present,
+            "latency_sec": round(latency, 3),
+            "answer": result.get("answer", ""),          # complete generated answer
+            "citations": citations,                       # complete reference sources
         })
     detail = pd.DataFrame(rows)
+    detail.attrs["full_records"] = records  # carried to save_outputs for the JSON export
     valid_hits = [x for x in detail["retrieval_hit"].tolist() if isinstance(x, (bool, np.bool_))]
     valid_src_hits = [x for x in detail["source_type_hit"].tolist() if isinstance(x, (bool, np.bool_))]
     summary = pd.DataFrame([{

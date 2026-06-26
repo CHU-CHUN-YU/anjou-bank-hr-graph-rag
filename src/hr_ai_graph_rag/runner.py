@@ -161,6 +161,22 @@ def save_outputs(output_dir: Path, articles, chunks, kg: HRKnowledgeGraph, demo_
     golden_df.to_csv(output_dir / "golden_dataset.csv", index=False, encoding="utf-8-sig")
     eval_detail.to_csv(output_dir / "evaluation_detail.csv", index=False, encoding="utf-8-sig")
     eval_summary.to_csv(output_dir / "evaluation_summary.csv", index=False, encoding="utf-8-sig")
+    # Full per-question records: complete generated answer + complete reference sources.
+    eval_records = eval_detail.attrs.get("full_records", [])
+    # (a) one aggregate JSON with all questions + the summary.
+    with open(output_dir / "evaluation_records.json", "w", encoding="utf-8") as f:
+        json.dump({
+            "summary": eval_summary.to_dict(orient="records")[0] if len(eval_summary) else {},
+            "records": eval_records,
+        }, f, ensure_ascii=False, indent=2)
+    # (b) one JSON file per question under evaluation_records/.
+    records_dir = output_dir / "evaluation_records"
+    records_dir.mkdir(parents=True, exist_ok=True)
+    for i, rec in enumerate(eval_records, start=1):
+        rid = rec.get("id") if rec.get("id") not in (None, "") else f"q{i:03d}"
+        safe = re.sub(r"[^0-9A-Za-z_.-]", "_", str(rid))
+        with open(records_dir / f"{safe}.json", "w", encoding="utf-8") as f:
+            json.dump(rec, f, ensure_ascii=False, indent=2)
     kg.save_graph_files(output_dir)
     readme = f"""
 # 安久銀行 HR AI 智能助理 - Colab Technical Demo
@@ -181,8 +197,10 @@ def save_outputs(output_dir: Path, articles, chunks, kg: HRKnowledgeGraph, demo_
 - chunks_3layer_faq.json / csv
 - kg_nodes.csv / kg_edges.csv / hr_knowledge_graph.gexf
 - golden_dataset.csv
-- evaluation_detail.csv
+- evaluation_detail.csv（含每題完整答案 answer_full 與來源 citations_json）
 - evaluation_summary.csv
+- evaluation_records.json（彙總:每題完整答案 + 完整參考來源 + summary）
+- evaluation_records/<id>.json（每題各一個 JSON,完整答案 + 完整來源）
 - demo_results.json
 - feedback_log.csv
 """.strip()
@@ -190,9 +208,9 @@ def save_outputs(output_dir: Path, articles, chunks, kg: HRKnowledgeGraph, demo_
 
     zip_path = output_dir / "hr_ai_graph_rag_outputs.zip"
     with zipfile.ZipFile(zip_path, "w") as z:
-        for fp in output_dir.glob("*"):
+        for fp in output_dir.rglob("*"):
             if fp.is_file() and fp.name != zip_path.name:
-                z.write(fp, arcname=fp.name)
+                z.write(fp, arcname=str(fp.relative_to(output_dir)))
     print("Saved outputs to:", output_dir)
     print("ZIP:", zip_path)
     if IN_COLAB:
