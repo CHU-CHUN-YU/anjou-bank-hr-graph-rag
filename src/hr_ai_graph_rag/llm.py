@@ -1,7 +1,7 @@
 # ============================================================
 # llm — 本地 HuggingFace 生成模型(LocalHFLLM)
 #
-# 載入本地 Gemma(4-bit 選配),提供 call_llm_text / call_llm_json。
+# 載入本地生成模型(預設 Qwen2.5-1.5B-Instruct,4-bit 選配),提供 call_llm_text / call_llm_json。
 # transformers/torch 於載入模型時才取用;失敗則回傳 None 由上層 fallback。
 # 依賴:config、utils。
 # ============================================================
@@ -16,7 +16,7 @@ class LocalHFLLM:
 
     Recommended Colab settings:
     - Runtime > Change runtime type > T4 GPU or better
-    - Default model: google/gemma-2-2b-it (open source; gated on HF — needs HF token)
+    - Default model: Qwen/Qwen2.5-1.5B-Instruct (open source, not gated — no HF token needed)
     - 4-bit quantization: enabled by default to reduce GPU memory usage
 
     The wrapper is lazy-loaded: the model is downloaded and loaded only when the

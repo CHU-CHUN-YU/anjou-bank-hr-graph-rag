@@ -142,11 +142,12 @@ RERANK_CANDIDATES = int(os.getenv("RERANK_CANDIDATES", "20"))
 RERANK_WEIGHT = float(os.getenv("RERANK_WEIGHT", "0.7"))
 
 # Local HuggingFace LLM settings (response generation).
-# Default is the open-source google/gemma-2-2b-it (Colab T4 friendly with 4-bit).
-# For more quality on a larger GPU try google/gemma-2-9b-it.
-# NOTE: Gemma is a gated model on the HuggingFace Hub — you must accept its license and
-# provide an HF token (e.g. `huggingface-cli login` or HF_TOKEN env) to download it.
-HF_LLM_MODEL_NAME = os.getenv("HF_LLM_MODEL_NAME", "google/gemma-2-2b-it")
+# Default is Qwen/Qwen2.5-1.5B-Instruct — open-source, multilingual (incl. Traditional
+# Chinese), Colab T4 friendly with 4-bit, and NOT gated (no HF license/token needed).
+# For more quality on a larger GPU try Qwen/Qwen2.5-7B-Instruct.
+# You may also point this at a gated model such as google/gemma-2-2b-it, but then you
+# must accept its license and provide an HF token (`huggingface-cli login` or HF_TOKEN).
+HF_LLM_MODEL_NAME = os.getenv("HF_LLM_MODEL_NAME", "Qwen/Qwen2.5-1.5B-Instruct")
 HF_LLM_USE_4BIT = os.getenv("HF_LLM_USE_4BIT", "true").lower() == "true"
 HF_MAX_NEW_TOKENS = int(os.getenv("HF_MAX_NEW_TOKENS", "768"))
 HF_TEMPERATURE = float(os.getenv("HF_TEMPERATURE", "0.1"))

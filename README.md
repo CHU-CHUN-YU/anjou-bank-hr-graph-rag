@@ -96,7 +96,8 @@ python tests/test_retrieval_rerank.py
 
 In **Google Colab**: choose a T4 GPU runtime, then `git clone` this repo and run
 `PYTHONPATH=src python -m hr_ai_graph_rag` (bundled `data/` is auto-discovered; set the env
-vars below to override inputs, and set `HF_TOKEN` for the gated Gemma model).
+vars below to override inputs). The default LLM (Qwen2.5-1.5B-Instruct) is open and
+**not gated**, so no HuggingFace token is required out of the box.
 
 The bundled `data/` files are auto-discovered when running from the repo. The official
 勞動基準法 DOCX is **not** bundled (it is an external legal source); if you don't supply
@@ -114,14 +115,16 @@ one, a built-in sample of key articles is used so the pipeline still runs end-to
 | `USE_RERANKER` | `true` | Enable cross-encoder rerank stage |
 | `RERANKER_MODEL_NAME` | `BAAI/bge-reranker-v2-m3` | Cross-encoder reranker |
 | `RERANK_CANDIDATES` / `RERANK_WEIGHT` | `20` / `0.7` | Rerank pool size / score blend |
-| `HF_LLM_MODEL_NAME` | `google/gemma-2-2b-it` | Local generative model (response) |
+| `HF_LLM_MODEL_NAME` | `Qwen/Qwen2.5-1.5B-Instruct` | Local generative model (response) |
 | `USE_LLM` | `true` | Use the generative LLM (false = template answer) |
 | `USE_LOCAL_LLM_FOR_QUERY_UNDERSTANDING` | `true` | Local-LLM query classification |
 | `USE_GOLDEN_AS_FAQ_CHUNKS` | `false` | Keep eval data out of the KB (leave false) |
 | `LOAD_PENDING_GRAPH_EDGES` | `false` | Load only HR-approved graph edges |
 
-> **Gemma is a gated model on the HuggingFace Hub.** Accept its license on the model
-> page and authenticate (`huggingface-cli login` or set `HF_TOKEN`) before the first run.
+> The default `Qwen/Qwen2.5-1.5B-Instruct` is **not gated** — no HuggingFace token or
+> license acceptance is needed. If you switch `HF_LLM_MODEL_NAME` to a gated model (e.g.
+> `google/gemma-2-2b-it`), accept its license on the model page and authenticate
+> (`huggingface-cli login` or set `HF_TOKEN`) before the first run.
 > `BAAI/bge-m3` (~2GB) and `bge-reranker-v2-m3` (~2GB) are best on a GPU.
 
 ## Notes
