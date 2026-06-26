@@ -363,6 +363,14 @@ Heuristic baseline：
         risk_matches = self._match_risk_policies(q)
         if risk_matches:
             base["risk_matches"] = risk_matches
+        stage_log(
+            "query_understanding",
+            f"category={base.get('category')} intent={base.get('intent')} risk={base.get('risk_level')} "
+            f"concepts={len(base.get('matched_concepts', []) or [])} "
+            f"risk_matches={len(base.get('risk_matches', []) or [])} "
+            f"missing_slots={base.get('missing_slots', []) or []}",
+            preview=f"rewritten: {base.get('rewritten_query', q)}",
+        )
         return {**base, "debug": add_debug(state, f"Query understanding: {base}")}
 
     def _node_retrieval_orchestrator(self, state: HRState) -> HRState:
@@ -377,6 +385,14 @@ Heuristic baseline：
             for rel in c.get("related_articles", []):
                 seed_ids.append(rel)
         graph_ctx = self.kg.expand(seed_ids, state["question"], hops=1, max_nodes=14, preferred_relations=state.get("preferred_relations", []))
+        top = chunks[0] if chunks else {}
+        stage_log(
+            "retrieval",
+            f"chunks={len(chunks)} graph_nodes={len(graph_ctx.get('nodes', []))} "
+            f"graph_edges={len(graph_ctx.get('edges', []))} use_graph={graph_ctx.get('use_graph')}",
+            preview=(f"top: [{top.get('source_type')}] {top.get('article_no')} {top.get('title')} "
+                     f"score={top.get('final_score')}") if top else "no chunks retrieved",
+        )
         return {
             "retrieved_chunks": chunks,
             "graph_context": graph_ctx,
@@ -424,6 +440,11 @@ Heuristic baseline：
             route = "answer"
             final_risk_level = state.get("risk_level", "低")
 
+        stage_log(
+            "guardrails",
+            f"policy={policy} confidence={confidence:.4f} → route={route} risk={final_risk_level} "
+            f"(risk_matches={len(risk_matches)} missing_slots={len(missing_slots)})",
+        )
         return {
             "confidence": round(confidence, 4),
             "route": route,
@@ -537,7 +558,14 @@ Retrieval / Graph Context:
 下一步建議：
 """
             answer = call_llm_text(system, user, temperature=0.1) or self._fallback_answer(state, disclaimer=disclaimer)
-        return {"answer": answer, "citations": self._build_citations(state), "debug": add_debug(state, "Generated answer")}
+        citations = self._build_citations(state)
+        stage_log(
+            "generate_answer",
+            f"route={state.get('route')} llm={'on' if USE_LLM else 'off(template)'} "
+            f"answer_len={len(answer)} citations={len(citations)}",
+            preview=answer,
+        )
+        return {"answer": answer, "citations": citations, "debug": add_debug(state, "Generated answer")}
 
     def _node_clarify(self, state: HRState) -> HRState:
         missing_slots = state.get("missing_slots", []) or []
@@ -566,6 +594,11 @@ Retrieval / Graph Context:
         for i, qu in enumerate(questions, start=1):
             answer += f"\n{i}. {qu}"
         answer += "\n\n在資訊不足時，系統不會直接推論答案，以降低 HR 法規誤判風險。"
+        stage_log(
+            "clarify",
+            f"missing_slots={missing_slots or '—'} clarify_questions={len(questions)}",
+            preview=answer,
+        )
         return {"answer": answer, "citations": [], "faithfulness_score": 1.0, "debug": add_debug(state, "Clarification generated")}
 
     def _node_escalate(self, state: HRState) -> HRState:
@@ -588,6 +621,12 @@ Retrieval / Graph Context:
 
 下一步建議：請洽 HR 服務窗口或依公司正式申訴 / 諮詢流程處理。
 """.strip()
+        stage_log(
+            "escalate",
+            f"risk={state.get('risk_level')} "
+            f"risk_policies={[r.get('risk_policy_id', '') for r in state.get('risk_matches', [])] or '—'}",
+            preview=answer,
+        )
         return {"answer": answer, "citations": self._build_citations(state), "faithfulness_score": 1.0, "debug": add_debug(state, "Escalation generated")}
 
     def _node_faithfulness_check(self, state: HRState) -> HRState:
@@ -600,6 +639,7 @@ Retrieval / Graph Context:
         if mentions_article: score += 0.05
         if state.get("route") in ["escalate", "clarify"]: score = max(score, 0.95)
         score = min(1.0, score)
+        stage_log("faithfulness_check", f"score={score:.4f} has_citation={has_citation} mentions_article={mentions_article}")
         return {"faithfulness_score": round(score, 4), "debug": add_debug(state, f"Faithfulness={score:.4f}")}
 
     def _route_after_guardrails(self, state: HRState) -> Literal["answer", "disclaimer", "escalate", "clarify"]:
@@ -636,6 +676,7 @@ Retrieval / Graph Context:
         return graph.compile()
 
     def ask(self, question: str) -> HRState:
+        stage_log("ask", "處理新問題", preview=question)
         return self.app.invoke({"question": question})
 
 # -----------------------------

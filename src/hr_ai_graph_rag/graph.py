@@ -153,8 +153,27 @@ class HRKnowledgeGraph:
                     human_review_required=e.get("human_review_required", False),
                 )
 
+    def _node_type_counts(self) -> Dict[str, int]:
+        counts: Dict[str, int] = defaultdict(int)
+        for _, d in self.G.nodes(data=True):
+            counts[d.get("node_type", "unknown")] += 1
+        return dict(counts)
+
+    def _relation_counts(self) -> Dict[str, int]:
+        counts: Dict[str, int] = defaultdict(int)
+        for _, _, d in self.G.edges(data=True):
+            counts[d.get("relation", "unknown")] += 1
+        return dict(counts)
+
     def _build_graph(self):
+        # Stage 1: concept nodes (from offline artifacts, or fallback skeleton).
         self._add_concept_nodes()
+        stage_log("graph:concept_nodes",
+                  f"concept nodes={self.G.number_of_nodes()} (artifact concepts={len(self.artifacts.concept_nodes)})",
+                  preview="；".join(d.get("label", n) for n, d in list(self.G.nodes(data=True))[:8]))
+
+        # Stage 2: article nodes (law + internal policy) + intra-document refs.
+        n_nodes_before, n_edges_before = self.G.number_of_nodes(), self.G.number_of_edges()
         for a in self.articles:
             self.G.add_node(
                 a["article_id"],
@@ -172,9 +191,28 @@ class HRKnowledgeGraph:
                     self.G.add_edge(a["article_id"], rel, relation="refers_to")
             for relation, target in a.get("graph_edges", []):
                 self.G.add_edge(a["article_id"], target, relation=relation)
+        stage_log("graph:article_nodes",
+                  f"+{self.G.number_of_nodes() - n_nodes_before} article nodes, "
+                  f"+{self.G.number_of_edges() - n_edges_before} refers_to/doc edges",
+                  preview=f"node types={self._node_type_counts()}")
 
+        # Stage 3: concept↔article edges (artifact-driven, or category fallback).
+        n_edges_before = self.G.number_of_edges()
         self._add_concept_article_edges()
+        stage_log("graph:concept_article_edges",
+                  f"+{self.G.number_of_edges() - n_edges_before} has_rule/related_to edges")
+
+        # Stage 4: extra artifact-provided edge candidates (approved-only by default).
+        n_edges_before = self.G.number_of_edges()
         self._add_artifact_edge_candidates()
+        stage_log("graph:artifact_edges",
+                  f"+{self.G.number_of_edges() - n_edges_before} candidate edges "
+                  f"(LOAD_PENDING_GRAPH_EDGES={LOAD_PENDING_GRAPH_EDGES})")
+
+        # Final summary of the built knowledge graph.
+        stage_log("graph:built",
+                  f"nodes={self.G.number_of_nodes()} edges={self.G.number_of_edges()}",
+                  preview=f"by relation={self._relation_counts()}")
 
     def expand(self, seed_article_ids: List[str], question: str, hops: int = 1, max_nodes: int = 12, preferred_relations: Optional[List[str]] = None) -> Dict[str, Any]:
         # Runtime expansion is deterministic; local LLM can provide preferred relations, but traversal uses approved graph only.

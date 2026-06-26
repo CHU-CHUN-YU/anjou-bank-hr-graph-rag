@@ -209,6 +209,33 @@ LOAD_PENDING_GRAPH_EDGES = os.getenv("LOAD_PENDING_GRAPH_EDGES", "false").lower(
 # Set to true only for retrieval experiments. For honest evaluation, leave it false.
 USE_GOLDEN_AS_FAQ_CHUNKS = os.getenv("USE_GOLDEN_AS_FAQ_CHUNKS", "false").lower() == "true"
 
+# Stage logging: print one concise line per pipeline stage so you can see WHAT each step
+# produced (ingestion / graph build / per-question query-understanding · retrieval ·
+# guardrails · generation · faithfulness). Turn off with STAGE_LOG=false; change the
+# content-preview length with STAGE_LOG_PREVIEW.
+STAGE_LOG = os.getenv("STAGE_LOG", "true").lower() == "true"
+STAGE_LOG_PREVIEW = int(os.getenv("STAGE_LOG_PREVIEW", "160"))
+
+
+def stage_log(stage: str, message: str = "", preview: Any = "") -> None:
+    """Print a `[STAGE] <name> — <facts>` line (+ optional content preview).
+
+    Used throughout the pipeline so each stage announces what it output. No-op when
+    STAGE_LOG is false, so production runs can silence it via env.
+    """
+    if not STAGE_LOG:
+        return
+    line = f"[STAGE] {stage}"
+    if message:
+        line += f" — {message}"
+    print(line)
+    if preview:
+        p = str(preview).replace("\n", " ").strip()
+        if len(p) > STAGE_LOG_PREVIEW:
+            p = p[:STAGE_LOG_PREVIEW] + "…"
+        print(f"        ↳ {p}")
+
+
 print("IN_COLAB =", IN_COLAB)
 print("torch available =", _TORCH_AVAILABLE)
 print("CUDA available =", _cuda_available())
@@ -227,3 +254,4 @@ print("USE_GOLDEN_AS_FAQ_CHUNKS =", USE_GOLDEN_AS_FAQ_CHUNKS)
 print("OFFLINE_ARTIFACT_DIR =", OFFLINE_ARTIFACT_DIR or "<auto-detect or upload optional>")
 print("OFFLINE_ARTIFACT_ZIP_PATH =", OFFLINE_ARTIFACT_ZIP_PATH or "<auto-detect or upload optional>")
 print("LOAD_PENDING_GRAPH_EDGES =", LOAD_PENDING_GRAPH_EDGES)
+print("STAGE_LOG =", STAGE_LOG)

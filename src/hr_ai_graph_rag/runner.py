@@ -208,10 +208,14 @@ def main():
     print("Labor Law DOCX path:", labor_docx_path)
     print("Internal Policy DOCX path:", policy_docx_path)
     print("Golden Dataset JSON path:", golden_json_path)
+    stage_log("input_files",
+              f"law={Path(labor_docx_path).name} policy={Path(policy_docx_path).name} golden={Path(golden_json_path).name}")
 
     offline_artifacts = load_offline_artifacts()
+    stage_log("offline_artifacts", f"loaded={sorted(offline_artifacts.loaded_files.keys()) or '—'}")
     golden_df = load_golden_dataset(golden_json_path)
     print(f"Golden Dataset questions: {len(golden_df)}")
+    stage_log("golden_dataset", f"rows={len(golden_df)} columns={list(golden_df.columns)}")
     display(Markdown("# Uploaded Golden Dataset Preview"))
     display(golden_df.head(10))
 
@@ -223,19 +227,28 @@ def main():
     )
     print(f"Articles: {len(articles)}")
     print(f"Chunks: {len(chunks)}")
+    _chunk_types = defaultdict(int)
+    for c in chunks:
+        _chunk_types[c.get("chunk_type", "?")] += 1
+    stage_log("ingestion",
+              f"articles={len(articles)} chunks={len(chunks)} chunk_types={dict(_chunk_types)}",
+              preview=(chunks[0].get("content", "") if chunks else "no chunks"))
     display(Markdown("# Knowledge Chunks Preview"))
     display(pd.DataFrame(chunks).drop(columns=["embedding_text"], errors="ignore").head(12))
 
+    stage_log("graph:build", f"building knowledge graph from {len(articles)} articles / {len(chunks)} chunks…")
     kg = HRKnowledgeGraph(articles, chunks, artifacts=offline_artifacts)
     print("KG nodes:", kg.G.number_of_nodes(), "edges:", kg.G.number_of_edges())
 
     retriever = HybridRetriever(chunks)
+    stage_log("retriever", f"HybridRetriever ready over {len(chunks)} chunks (dense embedding + BM25 + rerank)")
     assistant = HRAssistantGraph(retriever, kg, artifacts=offline_artifacts)
 
     # Use first 9 questions from the uploaded Golden Dataset as demo questions.
     demo_questions = golden_df["question"].dropna().astype(str).head(9).tolist()
 
     demo_results = []
+    stage_log("demo", f"running {len(demo_questions)} golden questions through the workflow…")
     print("\nRunning demo questions...")
     for q in demo_questions:
         r = assistant.ask(q)
@@ -260,6 +273,8 @@ def main():
 
     # Evaluation on uploaded Golden Dataset JSON
     eval_detail, eval_summary = evaluate_assistant(assistant, golden_df)
+    stage_log("evaluation", f"evaluated {len(eval_detail)} questions",
+              preview=eval_summary.to_dict(orient="records") if hasattr(eval_summary, "to_dict") else eval_summary)
     display(Markdown("# Evaluation Detail"))
     display(eval_detail)
     display(Markdown("# Evaluation Summary"))
