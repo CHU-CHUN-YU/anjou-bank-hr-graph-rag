@@ -177,18 +177,31 @@ REPO_DATA_DIR = REPO_ROOT / "data"
 # Optional: you may set these paths manually before running the script/notebook.
 # The internal-policy DOCX, golden JSON and offline artifacts are bundled under
 # <repo>/data and auto-discovered whenever they exist — including in Colab, since the
-# repo is cloned with its data. (The official 勞動基準法 DOCX is NOT bundled; set
-# LABOR_LAW_DOCX_PATH to supply one, otherwise a built-in sample is used.)
+# repo is cloned with its data. A 勞動基準法 DOCX placed in data/policies/ (filename
+# containing 勞動基準法 / 勞基法 / labor) is auto-discovered too; if none is present a
+# built-in sample of key articles is used. Override any path with the env vars.
 LABOR_LAW_DOCX_PATH = os.getenv("LABOR_LAW_DOCX_PATH", "").strip()
 INTERNAL_POLICY_DOCX_PATH = os.getenv("INTERNAL_POLICY_DOCX_PATH", "").strip()
 GOLDEN_DATASET_JSON_PATH = os.getenv("GOLDEN_DATASET_JSON_PATH", "").strip()
 
-_bundled_policy = REPO_DATA_DIR / "policies" / "安久銀行員工工作與福利規章辦法_模擬版.docx"
+_policies_dir = REPO_DATA_DIR / "policies"
+_bundled_policy = _policies_dir / "安久銀行員工工作與福利規章辦法_模擬版.docx"
 _bundled_golden = REPO_DATA_DIR / "golden" / "anjou_bank_hr_ai_golden_dataset_50.json"
 if not INTERNAL_POLICY_DOCX_PATH and _bundled_policy.exists():
     INTERNAL_POLICY_DOCX_PATH = str(_bundled_policy)
 if not GOLDEN_DATASET_JSON_PATH and _bundled_golden.exists():
     GOLDEN_DATASET_JSON_PATH = str(_bundled_golden)
+
+# Auto-discover a 勞動基準法 DOCX bundled under data/policies/ (by filename keyword),
+# skipping the internal-policy file. First match wins (sorted for determinism).
+if not LABOR_LAW_DOCX_PATH and _policies_dir.exists():
+    _law_keywords = ("勞動基準法", "勞基法", "labor", "labour")
+    for _docx in sorted(_policies_dir.glob("*.docx")):
+        if _docx == _bundled_policy:
+            continue
+        if any(k in _docx.name.lower() if k.isascii() else k in _docx.name for k in _law_keywords):
+            LABOR_LAW_DOCX_PATH = str(_docx)
+            break
 
 # Offline artifacts can be provided as a folder or a ZIP file.
 # Recommended files inside the folder/ZIP:

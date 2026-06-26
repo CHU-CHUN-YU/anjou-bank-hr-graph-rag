@@ -111,15 +111,16 @@ In **Google Colab**: choose a T4 GPU runtime, then `git clone` this repo and run
 vars below to override inputs). The default LLM (Qwen2.5-1.5B-Instruct) is open and
 **not gated**, so no HuggingFace token is required out of the box.
 
-The bundled `data/` files are auto-discovered when running from the repo. The official
-勞動基準法 DOCX is **not** bundled (it is an external legal source); if you don't supply
-one, a built-in sample of key articles is used so the pipeline still runs end-to-end.
+The bundled `data/` files are auto-discovered when running from the repo. A 勞動基準法
+DOCX placed in `data/policies/` (filename containing 勞動基準法 / 勞基法 / labor) is
+auto-discovered too; if none is present, a built-in sample of key articles is used so
+the pipeline still runs end-to-end. Override with `LABOR_LAW_DOCX_PATH`.
 
 ### Configuration (environment variables)
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `LABOR_LAW_DOCX_PATH` | *(sample)* | Official 勞動基準法 DOCX |
+| `LABOR_LAW_DOCX_PATH` | auto / sample | 勞動基準法 DOCX (auto-discovered in `data/policies/`, else built-in sample) |
 | `INTERNAL_POLICY_DOCX_PATH` | bundled | Internal policy DOCX |
 | `GOLDEN_DATASET_JSON_PATH` | bundled | Evaluation set |
 | `OFFLINE_ARTIFACT_DIR` | bundled | Offline artifact folder |

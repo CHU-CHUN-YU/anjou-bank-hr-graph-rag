@@ -67,7 +67,7 @@
 
 | 資料 | 來源 | 預設 | 說明 |
 |---|---|---|---|
-| 勞動基準法 DOCX | 外部法律 | **未內附**;無則用內建 sample | 屬外部法源,不隨 repo 散布;沒提供時用內建關鍵條文 sample 讓流程能跑完 |
+| 勞動基準法 DOCX | 外部法律 | 放在 `data/policies/`(檔名含 勞動基準法/勞基法/labor)→ **自動探索**;無則用內建 sample | 沒提供時用內建關鍵條文 sample 讓流程能跑完;可用 `LABOR_LAW_DOCX_PATH` 覆蓋 |
 | 安久銀行內規 DOCX | 內附 `data/policies/` | 自動探索 | 虛構的銀行內部規章 |
 | Golden Dataset JSON | 內附 `data/golden/` | 自動探索 | 50 題評估集 |
 | 離線 artifacts(9 個 JSON) | 內附 `data/hr_offline_artifacts/` | 自動探索 | 概念節點、風險政策、查詢樣式、改寫規則、關係 schema、圖邊候選、角色對應、本地 LLM 使用政策、清單 manifest |
@@ -94,7 +94,7 @@ HRAssistantGraph(...)     → 組裝 LangGraph 工作流
 ### A1. 輸入準備(`prepare_input_files`)
 - 先用環境變數 / 內附路徑解析三個檔;
 - 內規 DOCX、golden JSON、artifacts 都會**自動探索**(在 Colab clone 的 repo 也適用);
-- 勞基法 DOCX 永遠不內附 → **沒提供就產生內建 sample 條文**;
+- 勞基法 DOCX:若 `data/policies/` 有(檔名含 勞動基準法/勞基法/labor)會自動探索,**沒有才產生內建 sample 條文**;
 - 只有「真的缺檔 **且** 在互動式 notebook kernel」時才會跳出上傳介面(用 `python -m` 子行程跑時不會卡住)。
 
 ### A2. 離線 artifacts(`load_offline_artifacts`)
