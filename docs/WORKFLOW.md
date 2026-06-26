@@ -595,4 +595,3 @@ Retrieval / Graph Context:
 
 ## B8. 一句話總結圖譜原理
 **節點來自「解析後的條文 + 概念 artifact」,邊主要來自「內規條文裡對法規的引用(overrides/refers_to)+ 概念對應 + 人工核准的候選邊」;靠條號正規化與三段式 `_resolve_article_ref` 對齊端點;只載核准邊、relation 白名單把關;執行時針對比較型問題做 1-hop 雙向擴展,LLM 只能偏好關係、不能改圖。**
-```
