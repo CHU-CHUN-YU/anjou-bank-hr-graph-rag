@@ -236,22 +236,29 @@ def stage_log(stage: str, message: str = "", preview: Any = "") -> None:
         print(f"        ↳ {p}")
 
 
-print("IN_COLAB =", IN_COLAB)
-print("torch available =", _TORCH_AVAILABLE)
-print("CUDA available =", _cuda_available())
-if _cuda_available():
-    print("GPU =", torch.cuda.get_device_name(0))
-print("USE_LOCAL_LLM_FOR_QUERY_UNDERSTANDING =", USE_LOCAL_LLM_FOR_QUERY_UNDERSTANDING)
-print("LOCAL_LLM_OPTIONAL_REWRITE_MAX_TERMS =", LOCAL_LLM_OPTIONAL_REWRITE_MAX_TERMS)
-print("HF_LLM_MODEL_NAME =", HF_LLM_MODEL_NAME)
-print("HF_LLM_USE_4BIT =", HF_LLM_USE_4BIT)
-print("EMBEDDING_MODEL =", EMBEDDING_MODEL_NAME)
-print("OUTPUT_DIR =", OUTPUT_DIR)
-print("LABOR_LAW_DOCX_PATH =", LABOR_LAW_DOCX_PATH or "<upload required>")
-print("INTERNAL_POLICY_DOCX_PATH =", INTERNAL_POLICY_DOCX_PATH or "<upload required>")
-print("GOLDEN_DATASET_JSON_PATH =", GOLDEN_DATASET_JSON_PATH or "<upload required>")
-print("USE_GOLDEN_AS_FAQ_CHUNKS =", USE_GOLDEN_AS_FAQ_CHUNKS)
-print("OFFLINE_ARTIFACT_DIR =", OFFLINE_ARTIFACT_DIR or "<auto-detect or upload optional>")
-print("OFFLINE_ARTIFACT_ZIP_PATH =", OFFLINE_ARTIFACT_ZIP_PATH or "<auto-detect or upload optional>")
-print("LOAD_PENDING_GRAPH_EDGES =", LOAD_PENDING_GRAPH_EDGES)
-print("STAGE_LOG =", STAGE_LOG)
+def print_config_summary() -> None:
+    """Print the resolved configuration summary.
+
+    Called by the runner at the start of a run (inside the run-log tee) rather than at
+    import time, so importing the package stays side-effect free AND the summary is
+    captured in the saved run log.
+    """
+    print("IN_COLAB =", IN_COLAB)
+    print("torch available =", _TORCH_AVAILABLE)
+    print("CUDA available =", _cuda_available())
+    if _cuda_available():
+        print("GPU =", torch.cuda.get_device_name(0))
+    print("USE_LOCAL_LLM_FOR_QUERY_UNDERSTANDING =", USE_LOCAL_LLM_FOR_QUERY_UNDERSTANDING)
+    print("LOCAL_LLM_OPTIONAL_REWRITE_MAX_TERMS =", LOCAL_LLM_OPTIONAL_REWRITE_MAX_TERMS)
+    print("HF_LLM_MODEL_NAME =", HF_LLM_MODEL_NAME)
+    print("HF_LLM_USE_4BIT =", HF_LLM_USE_4BIT)
+    print("EMBEDDING_MODEL =", EMBEDDING_MODEL_NAME)
+    print("OUTPUT_DIR =", OUTPUT_DIR)
+    print("LABOR_LAW_DOCX_PATH =", LABOR_LAW_DOCX_PATH or "<upload required>")
+    print("INTERNAL_POLICY_DOCX_PATH =", INTERNAL_POLICY_DOCX_PATH or "<upload required>")
+    print("GOLDEN_DATASET_JSON_PATH =", GOLDEN_DATASET_JSON_PATH or "<upload required>")
+    print("USE_GOLDEN_AS_FAQ_CHUNKS =", USE_GOLDEN_AS_FAQ_CHUNKS)
+    print("OFFLINE_ARTIFACT_DIR =", OFFLINE_ARTIFACT_DIR or "<auto-detect or upload optional>")
+    print("OFFLINE_ARTIFACT_ZIP_PATH =", OFFLINE_ARTIFACT_ZIP_PATH or "<auto-detect or upload optional>")
+    print("LOAD_PENDING_GRAPH_EDGES =", LOAD_PENDING_GRAPH_EDGES)
+    print("STAGE_LOG =", STAGE_LOG)

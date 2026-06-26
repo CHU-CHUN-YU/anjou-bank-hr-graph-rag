@@ -148,8 +148,9 @@ one, a built-in sample of key articles is used so the pipeline still runs end-to
 
 ## Notes
 
-- `import hr_ai_graph_rag` loads no heavy deps and runs no pipeline (it only prints a
-  config summary); the full pipeline runs via `PYTHONPATH=src python -m hr_ai_graph_rag`,
+- `import hr_ai_graph_rag` is side-effect free (no heavy deps, no pipeline, no prints);
+  the config summary is printed by the runner at the start of a run (so it is captured
+  in the run log). The full pipeline runs via `PYTHONPATH=src python -m hr_ai_graph_rag`,
   `runner.main()`, or in Colab.
 - The package re-exports every public symbol at the top level, so `import hr_ai_graph_rag
   as hr` keeps the flat `hr.HRAssistantGraph`, `hr.main`, … interface — submodules

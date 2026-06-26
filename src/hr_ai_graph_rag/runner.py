@@ -245,6 +245,7 @@ def main():
 
 
 def _main():
+    print_config_summary()
     labor_docx_path, policy_docx_path, golden_json_path = prepare_input_files()
     print("Labor Law DOCX path:", labor_docx_path)
     print("Internal Policy DOCX path:", policy_docx_path)
