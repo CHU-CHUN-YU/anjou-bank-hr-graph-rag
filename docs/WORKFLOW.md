@@ -595,3 +595,143 @@ Retrieval / Graph Context:
 
 ## B8. 一句話總結圖譜原理
 **節點來自「解析後的條文 + 概念 artifact」,邊主要來自「內規條文裡對法規的引用(overrides/refers_to)+ 概念對應 + 人工核准的候選邊」;靠條號正規化與三段式 `_resolve_article_ref` 對齊端點;只載核准邊、relation 白名單把關;執行時針對比較型問題做 1-hop 雙向擴展,LLM 只能偏好關係、不能改圖。**
+
+---
+
+# 附錄 C:切塊(Chunking)詳解與範例
+
+切塊發生在離線建構階段的 `HRKnowledgeBuilder.build_chunks`(`ingestion.py`)。流程是:**先把 DOCX 解析成「條文(article)」,再從條文衍生出 4 種不同粒度的 chunk**,讓檢索能在「整份文件 / 單條條文 / 條文內語意片段 / FAQ」四個層次上比對。這就是所謂 **Policy-aware Hierarchical Chunking(政策感知的階層式切塊)**。
+
+## C0. 為什麼要多粒度切塊
+不同問題需要不同粒度的命中:
+- 寬泛問題(「公司有哪些假?」)→ 適合 **document** 層的整份摘要;
+- 明確條文問題(「特休幾天?」)→ 適合 **article** 層的完整條文;
+- 細節語意問題(「未休完的特休可以遞延嗎?」)→ 適合 **semantic** 層的單一句子片段(向量檢索對短而集中的片段更準)。
+
+把同一份資料同時切成多層,檢索時哪一層命中都算數(混合檢索取聯集),再靠 rerank 與 metadata 加成挑出最適合的。
+
+## C1. 第一步:DOCX → 條文(parse)
+- **法規**(`parse_labor_law_articles`):用章(`CHAPTER_PATTERN`)、條(`ARTICLE_PATTERN`)正則切;每條產生 `source_type="law"`、`priority=1`、`related_articles=[]`。
+- **內規**(`parse_internal_policy_articles`):用內規條文格式正則切;**會額外算出圖的素材**——`related_articles`(從文中抓到的勞基法條號)與 `graph_edges`(overrides / refers_to);`priority=2`;跳過只有標題、沒有內文(< 8 字)的目錄列。
+- 解析失敗時 fallback:用 **900 字、120 重疊** 的固定切塊,確保流程不中斷。
+- 每條 article 是一個 dict,欄位:`source_type, document_name, article_id, article_no, chapter, title, category, priority, version, effective_date, content, related_articles(, graph_edges)`。
+
+> `article_id` 由 `article_id_from_no` 正規化而來(例:第 18 條 → `policy_18`);`category` 由 `detect_category` 用關鍵字判定。
+
+## C2. 第二步:條文 → 4 種 chunk
+
+所有 chunk 共用欄位:`chunk_id, chunk_type, source_type, document_name, article_id, article_no, chapter, title, category, priority, version, effective_date, content, parent_id, related_articles, keywords`。
+
+### ① document chunk(文件層)— `make_document_chunks`
+- **每份文件一個** chunk;把該文件**前 20 條**條文各取 `「條號 標題：內容前 160 字」` 串成摘要。
+- `priority` = 該文件所有條文的**最大值**;`category` = 所有條文類別的**聯集**(逗號分隔);`article_no="DOCUMENT"`;`parent_id=None`。
+- 用途:整份文件的鳥瞰摘要,適合寬泛問題。
+
+### ② article chunk(條文層)— `make_article_chunks`
+- **每條條文一個** chunk,**1:1**,`content` 是該條**完整內文**。
+- `parent_id = "document::<文件名>"`(指回所屬文件層);保留 `related_articles`。
+- 用途:最常命中的主力層,單條條文精準回答。
+
+### ③ semantic chunk(語意子句層)— `make_semantic_subchunks`
+- 把條文 `content` 用 `split_sentences_zh`(以 `。！？；` 斷句)切成句子,**每累積到約 120 字**併成一組(group)。
+- **跳過規則**:若整條只會切出 ≤ 1 組 **且** content < 220 字 → **不產生 semantic chunk**(太短沒必要再切)。
+- 每組一個 chunk,`article_id = "<母條 id>::s{j}"`,`parent_id = 母條 article_id`。
+- 用途:把長條文打散成短而集中的片段,**向量檢索對短片段更準**,利於細節語意問題。
+
+### ④ faq chunk(FAQ 層,預設關閉)— `make_faq_chunks`
+- **只有 `USE_GOLDEN_AS_FAQ_CHUNKS=true` 才產生**(預設 false,避免把評估資料洩漏進知識庫)。
+- 從 golden 題的 `question` + `expected_key_points` 組成 `「FAQ 問題:… FAQ 回答重點:…」`;`source_type="golden_dataset_faq_experiment"`、`priority=1`。
+
+## C3. 第三步:收尾(`build_chunks` 末段)
+- 把 4 種 chunk 合併:`chunks = document + article + semantic + faq`;
+- 給每個 chunk 一個全域序號 `global_chunk_id`(`G00001`…);
+- 算 `embedding_text`(`chunk_to_text`)——**這才是真正被嵌入/檢索的文本**,格式:
+  ```
+  Chunk Type: …
+  Source Type: …
+  Document: …
+  Article: …
+  Title: …
+  Category: …
+  Priority: …
+  Content: …
+  Keywords: …
+  ```
+  把結構化欄位一起放進嵌入文本,讓向量同時帶有「類型/來源/類別」訊號。
+
+## C4. 完整範例
+
+假設內規 DOCX 裡有這麼一條(解析後的 `content`):
+
+```
+第 18 條 特別休假
+員工到職滿六個月以上未滿一年者，得申請特別休假三日；滿一年以上未滿二年者七日；滿二年以上未滿三年者十日。
+本公司特別休假日數優於勞動基準法第 38 條之最低標準，屬較有利之約定。
+特別休假因年度終結或契約終止而未休之日數，雇主應發給工資；經勞雇雙方協商同意者，得遞延至次一年度實施。
+員工申請特別休假應提前三個工作日於差勤系統提出，並經單位主管核准。
+```
+
+### 解析後的 article(C1 產出)
+```
+article_id      = policy_18
+article_no      = 第 18 條
+title           = 特別休假
+source_type     = internal_policy
+category        = leave            (detect_category 命中「特別休假/休假」)
+priority        = 2
+related_articles= [law_38]         (extract_related_law_ids 抓到「勞動基準法第 38 條」)
+graph_edges     = [("overrides", law_38)]   (內容含「優於/最低標準/較有利」→ overrides)
+```
+
+### 這一條會衍生出的 chunk
+
+**① document chunk(整份內規共用一個,這條只是其中一行)**
+```
+chunk_type = document
+article_no = DOCUMENT
+content    = "... 第 18 條 特別休假：員工到職滿六個月以上未滿一年者，得申請特別休假三日；滿一年...（前160字）\n 第 19 條 ...\n ..."
+priority   = 2   (取全文件最大)
+```
+
+**② article chunk(這條一個,完整內文)**
+```
+chunk_id   = article_00xx
+chunk_type = article
+article_id = policy_18
+content    = 「第 18 條 特別休假\n員工到職滿六個月…並經單位主管核准。」(整條)
+parent_id  = document::安久銀行員工工作與福利規章辦法_模擬版.docx
+related_articles = [law_38]
+```
+
+**③ semantic chunks(因為 content > 220 字,會切成多個語意組)**
+以約 120 字為界,大致切成 2 組:
+```
+semantic_00xx  article_id=policy_18::s1  parent_id=policy_18
+  content ≈ 「第 18 條 特別休假 員工到職滿六個月…十日。本公司特別休假日數優於勞動基準法第 38 條之最低標準，屬較有利之約定。」
+
+semantic_00xx  article_id=policy_18::s2  parent_id=policy_18
+  content ≈ 「特別休假因年度終結或契約終止而未休之日數，雇主應發給工資；經勞雇雙方協商同意者，得遞延至次一年度實施。員工申請特別休假應提前三個工作日於差勤系統提出，並經單位主管核准。」
+```
+> 若這條只有短短一句(< 220 字且切不出第二組),則**不會**產生 semantic chunk,只留 document + article 兩層。
+
+**④ faq chunk**:預設不產生(除非開 `USE_GOLDEN_AS_FAQ_CHUNKS`)。
+
+### 檢索時誰會被命中(把切塊和 §7 串起來)
+- 問「**特休未休完可以遞延嗎?**」→ 含「遞延」的 **semantic ::s2** 片段向量相似度最高,容易被選中;
+- 問「**公司特休比勞基法多嗎?**」→ **article**(policy_18)命中,且因含「公司/勞基法/優於」觸發圖擴展,沿 `policy_18 --overrides--> law_38` 補進勞基法第38條;
+- 問「**公司有哪些假?**」→ **document** 摘要層較易整體命中。
+
+## C5. 可調參數(都寫在 `ingestion.py`)
+| 參數 | 預設 | 位置 / 作用 |
+|---|---|---|
+| document 摘要每條取字數 | 160 | `make_document_chunks`,每條摘要長度 |
+| document 收錄條數 | 前 20 條 | `make_document_chunks` |
+| semantic 併組門檻 | 120 字 | `make_semantic_subchunks`,累積到此長度就切一組 |
+| semantic 跳過門檻 | 220 字 | `make_semantic_subchunks`,過短的條文不切 semantic |
+| parse fallback 切塊 | 900 字 / 120 重疊 | `parse_*` 解析失敗時的固定切塊 |
+| FAQ chunk | `USE_GOLDEN_AS_FAQ_CHUNKS=false` | 是否把 golden 轉成 FAQ chunk(預設關閉) |
+
+> 這些是寫死的常數;若要調(例如 semantic 想切更細),直接改 `ingestion.py` 對應數值即可。
+
+## C6. 一句話總結切塊
+**先把 DOCX 解析成條文(法規 priority=1、內規 priority=2 並順便算出 overrides 圖邊),再對每條同時產生 document(整份摘要)/ article(完整條文)/ semantic(約 120 字語意片段,短條文略過)三種粒度的 chunk(FAQ 預設關閉),最後組成含結構化欄位的 `embedding_text` 供嵌入與混合檢索。**
