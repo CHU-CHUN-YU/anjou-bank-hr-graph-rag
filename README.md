@@ -45,22 +45,33 @@ HuggingFace LLM (no OpenAI API key required) intended for a Colab T4 GPU.
 
 ```
 DOCX (law + internal policy) ─┐
-Golden Dataset JSON ──────────┤
+Golden Dataset JSON ──────────┤   data/ is bundled & auto-discovered
 Offline artifacts (9 JSON) ───┘
         │
         ▼
- Hierarchical chunking (document / article / semantic)
+ Hierarchical chunking → document / article / semantic chunks
+   (+ faq chunks only when USE_GOLDEN_AS_FAQ_CHUNKS=true)
         │
         ▼
- LangGraph workflow:
-   query understanding  → (heuristic + optional local-LLM classification)
-   retrieval orchestrator → hybrid (FAISS vector + BM25 + metadata) + graph expansion
-   deterministic guardrails → answer | disclaimer | clarify | escalate
-   grounded answer generation (local LLM) → faithfulness check
+ HRKnowledgeGraph   concept ↔ law/policy articles, typed relations
+ HybridRetriever    FAISS dense + BM25 + metadata, then cross-encoder rerank
         │
         ▼
- Evaluation vs. golden set (category / route / retrieval / citation / faithfulness / latency)
+ LangGraph workflow — one pass per question (HRAssistantGraph):
+   1. query_understanding    heuristic (+ optional local-LLM) → category / intent / risk / rewrite / slots
+   2. retrieval_orchestrator hybrid retrieval + 1-hop knowledge-graph expansion
+   3. guardrails (deterministic) → route ∈ { answer · disclaimer · clarify · escalate }
+        ├─ answer / disclaimer → 4. generate_answer (local LLM, [S#] citations) → 5. faithfulness_check
+        ├─ clarify  → return follow-up questions
+        └─ escalate → hand off to HR
+        │
+        ▼
+ Evaluation vs. golden set:
+   category · route · retrieval-hit · source-type-hit · citation · faithfulness · latency
 ```
+
+> Every stage prints a `[STAGE] <name> — <facts>` line (with a short content preview)
+> so you can see what each step produced; silence it with `STAGE_LOG=false`.
 
 ## Quick start
 
@@ -111,13 +122,17 @@ one, a built-in sample of key articles is used so the pipeline still runs end-to
 | `INTERNAL_POLICY_DOCX_PATH` | bundled | Internal policy DOCX |
 | `GOLDEN_DATASET_JSON_PATH` | bundled | Evaluation set |
 | `OFFLINE_ARTIFACT_DIR` | bundled | Offline artifact folder |
+| `OFFLINE_ARTIFACT_ZIP_PATH` | *(unset)* | Offline artifacts as a ZIP (alternative to the folder) |
 | `EMBEDDING_MODEL_NAME` | `BAAI/bge-m3` | Dense-retrieval embedding model |
 | `USE_RERANKER` | `true` | Enable cross-encoder rerank stage |
 | `RERANKER_MODEL_NAME` | `BAAI/bge-reranker-v2-m3` | Cross-encoder reranker |
 | `RERANK_CANDIDATES` / `RERANK_WEIGHT` | `20` / `0.7` | Rerank pool size / score blend |
 | `HF_LLM_MODEL_NAME` | `Qwen/Qwen2.5-1.5B-Instruct` | Local generative model (response) |
-| `USE_LLM` | `true` | Use the generative LLM (false = template answer) |
+| `HF_LLM_USE_4BIT` | `true` | 4-bit quantize the LLM (GPU only; auto-off on CPU) |
+| `HF_MAX_NEW_TOKENS` / `HF_TEMPERATURE` | `768` / `0.1` | LLM generation length / sampling temperature |
+| `USE_LLM` | `true` | Use the generative LLM (false = deterministic template answer) |
 | `USE_LOCAL_LLM_FOR_QUERY_UNDERSTANDING` | `true` | Local-LLM query classification |
+| `LOCAL_LLM_OPTIONAL_REWRITE_MAX_TERMS` | `5` | Max optional LLM query-expansion terms |
 | `USE_GOLDEN_AS_FAQ_CHUNKS` | `false` | Keep eval data out of the KB (leave false) |
 | `LOAD_PENDING_GRAPH_EDGES` | `false` | Load only HR-approved graph edges |
 | `STAGE_LOG` | `true` | Print a `[STAGE]` line per pipeline step (what each stage output) |
@@ -139,4 +154,8 @@ one, a built-in sample of key articles is used so the pipeline still runs end-to
   (`config`/`utils`/`graph`/`retrieval`/`workflow`/…) are an internal detail.
 - Heavy deps (torch, faiss, sentence-transformers, transformers, langgraph) are imported
   lazily, so the data/parse/graph/eval layers work with just `requirements-core.txt`.
+- A full run writes to `OUTPUT_DIR` (`./hr_ai_graph_rag_outputs`, or `/content/...` in
+  Colab, gitignored): knowledge-graph `kg_nodes.csv` / `kg_edges.csv` /
+  `hr_knowledge_graph.gexf`, chunks, evaluation detail + summary, `feedback_log.csv`,
+  and a bundled ZIP (auto-downloaded in Colab).
 - See `docs/README_RUNTIME_PATTERN_REWRITE.md` for the original (Chinese) design notes.
