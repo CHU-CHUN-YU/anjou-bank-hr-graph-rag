@@ -11,9 +11,17 @@
       "expected_category": "working_hours",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["law"],
-      "expected_citations": ["勞動基準法第30條"],
-      "expected_key_points": ["每日正常工作時間不得超過8小時", "每週正常工作時間不得超過40小時"],
+      "expected_source_type": [
+        "law"
+      ],
+      "expected_citations": [
+        "勞動基準法第30條"
+      ],
+      "expected_key_points": [
+        "每日正常工作時間不得超過8小時",
+        "每週正常工作時間不得超過40小時"
+      ],
+      "expected_answer": "依勞動基準法第30條規定，勞工正常工作時間每日不得超過8小時，每週不得超過40小時。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -25,9 +33,18 @@
       "expected_category": "overtime",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["law"],
-      "expected_citations": ["勞動基準法第24條"],
-      "expected_key_points": ["延長工作時間應給付加班費", "前2小時加給三分之一以上", "再延長2小時加給三分之二以上"],
+      "expected_source_type": [
+        "law"
+      ],
+      "expected_citations": [
+        "勞動基準法第24條"
+      ],
+      "expected_key_points": [
+        "延長工作時間應給付加班費",
+        "前2小時加給三分之一以上",
+        "再延長2小時加給三分之二以上"
+      ],
+      "expected_answer": "勞動基準法第24條規範延長工作時間（加班）的加班費標準：平日延長工時在2小時以內者，按平日每小時工資額加給三分之一以上；再延長2小時以內者，加給三分之二以上；使勞工於休息日工作者，另依該條以更高標準加給。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -39,9 +56,18 @@
       "expected_category": "leave",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["law"],
-      "expected_citations": ["勞動基準法第36條"],
-      "expected_key_points": ["每7日中應有2日休息", "其中1日為例假", "其中1日為休息日"],
+      "expected_source_type": [
+        "law"
+      ],
+      "expected_citations": [
+        "勞動基準法第36條"
+      ],
+      "expected_key_points": [
+        "每7日中應有2日休息",
+        "其中1日為例假",
+        "其中1日為休息日"
+      ],
+      "expected_answer": "依勞動基準法第36條規定，勞工每7日中應有2日之休息，其中1日為例假、1日為休息日。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -53,9 +79,16 @@
       "expected_category": "leave",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["law"],
-      "expected_citations": ["勞動基準法第38條"],
-      "expected_key_points": ["繼續工作滿6個月未滿1年者，法規最低特休為3日"],
+      "expected_source_type": [
+        "law"
+      ],
+      "expected_citations": [
+        "勞動基準法第38條"
+      ],
+      "expected_key_points": [
+        "繼續工作滿6個月未滿1年者，法規最低特休為3日"
+      ],
+      "expected_answer": "依勞動基準法第38條規定，勞工在同一雇主繼續工作滿6個月以上未滿1年者，法定最低特別休假為3日。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -67,9 +100,16 @@
       "expected_category": "leave",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["law"],
-      "expected_citations": ["勞動基準法第38條"],
-      "expected_key_points": ["繼續工作滿1年未滿2年者，法規最低特休為7日"],
+      "expected_source_type": [
+        "law"
+      ],
+      "expected_citations": [
+        "勞動基準法第38條"
+      ],
+      "expected_key_points": [
+        "繼續工作滿1年未滿2年者，法規最低特休為7日"
+      ],
+      "expected_answer": "依勞動基準法第38條規定，勞工繼續工作滿1年以上未滿2年者，法定最低特別休假為7日。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -81,9 +121,19 @@
       "expected_category": "termination",
       "expected_route": "answer",
       "risk_level": "medium",
-      "expected_source_type": ["law"],
-      "expected_citations": ["勞動基準法第16條"],
-      "expected_key_points": ["終止勞動契約需依年資預告", "3個月以上未滿1年為10日前預告", "1年以上未滿3年為20日前預告", "3年以上為30日前預告"],
+      "expected_source_type": [
+        "law"
+      ],
+      "expected_citations": [
+        "勞動基準法第16條"
+      ],
+      "expected_key_points": [
+        "終止勞動契約需依年資預告",
+        "3個月以上未滿1年為10日前預告",
+        "1年以上未滿3年為20日前預告",
+        "3年以上為30日前預告"
+      ],
+      "expected_answer": "依勞動基準法第16條，雇主資遣（終止勞動契約）應依勞工年資預告：繼續工作3個月以上未滿1年者於10日前預告、1年以上未滿3年者於20日前預告、3年以上者於30日前預告；雇主未依規定期間預告者，應給付預告期間之工資。實際資遣是否合法仍涉個案事由，如有爭議建議洽HR。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -95,9 +145,17 @@
       "expected_category": "salary",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["law"],
-      "expected_citations": ["勞動基準法第22條"],
-      "expected_key_points": ["工資應全額直接給付勞工", "若涉及個案扣款爭議需洽HR確認"],
+      "expected_source_type": [
+        "law"
+      ],
+      "expected_citations": [
+        "勞動基準法第22條"
+      ],
+      "expected_key_points": [
+        "工資應全額直接給付勞工",
+        "若涉及個案扣款爭議需洽HR確認"
+      ],
+      "expected_answer": "依勞動基準法第22條，工資應全額直接給付勞工；但法令另有規定或勞雇雙方另有約定者，不在此限。若涉及個案扣款爭議，建議洽HR確認。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -109,9 +167,17 @@
       "expected_category": "leave",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["law"],
-      "expected_citations": ["勞動基準法第43條"],
-      "expected_key_points": ["勞工因婚、喪、疾病或其他正當事由得請假", "請假相關事項依相關規則辦理"],
+      "expected_source_type": [
+        "law"
+      ],
+      "expected_citations": [
+        "勞動基準法第43條"
+      ],
+      "expected_key_points": [
+        "勞工因婚、喪、疾病或其他正當事由得請假",
+        "請假相關事項依相關規則辦理"
+      ],
+      "expected_answer": "勞動基準法第43條規定，勞工因婚、喪、疾病或其他正當事由得請假；至於各假別應給之假期及工資給付最低標準，則授權由中央主管機關訂定（勞工請假規則）辦理。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -123,9 +189,17 @@
       "expected_category": "overtime",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["law"],
-      "expected_citations": ["勞動基準法第32-1條"],
-      "expected_key_points": ["加班後得依勞工意願選擇補休", "補休期限或未休畢處理應依法令及約定辦理"],
+      "expected_source_type": [
+        "law"
+      ],
+      "expected_citations": [
+        "勞動基準法第32-1條"
+      ],
+      "expected_key_points": [
+        "加班後得依勞工意願選擇補休",
+        "補休期限或未休畢處理應依法令及約定辦理"
+      ],
+      "expected_answer": "加班補休的法源是勞動基準法第32-1條：勞工延長工時或於休息日工作後，得依本人意願選擇補休並經雇主同意，依實際工作時數計算補休；補休期限由勞雇雙方協商，期限屆滿或契約終止仍未補休者，應依加班當日工資標準發給工資。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -137,9 +211,19 @@
       "expected_category": "overtime",
       "expected_route": "disclaimer",
       "risk_level": "medium",
-      "expected_source_type": ["law"],
-      "expected_citations": ["勞動基準法第32條", "勞動基準法第42條"],
-      "expected_key_points": ["延長工時需符合程序與法令限制", "不得以不當方式強制員工延長工作時間", "若涉及個案爭議應轉HR確認"],
+      "expected_source_type": [
+        "law"
+      ],
+      "expected_citations": [
+        "勞動基準法第32條",
+        "勞動基準法第42條"
+      ],
+      "expected_key_points": [
+        "延長工時需符合程序與法令限制",
+        "不得以不當方式強制員工延長工作時間",
+        "若涉及個案爭議應轉HR確認"
+      ],
+      "expected_answer": "延長工作時間須依勞動基準法第32條經法定程序並符合每日及每月上限；且依第42條，勞工因健康或其他正當理由不能於正常工時外工作者，雇主不得強制。因此公司不得以不當方式強迫員工加班；若您遇到個案爭議，建議轉由HR或法遵確認。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -151,9 +235,17 @@
       "expected_category": "leave",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["internal_policy"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第11條"],
-      "expected_key_points": ["滿6個月未滿1年者，安久銀行模擬內規給予5日特休", "本行規定優於勞基法最低標準"],
+      "expected_source_type": [
+        "internal_policy"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第11條"
+      ],
+      "expected_key_points": [
+        "滿6個月未滿1年者，安久銀行模擬內規給予5日特休",
+        "本行規定優於勞基法最低標準"
+      ],
+      "expected_answer": "依安久銀行員工工作與福利規章辦法第11條，員工連續服務滿6個月未滿1年者可享5日特別休假，優於勞動基準法第38條的最低標準（3日）。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -165,9 +257,17 @@
       "expected_category": "leave",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["internal_policy"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第11條"],
-      "expected_key_points": ["滿1年未滿2年者，安久銀行模擬內規給予8日特休", "優於勞基法最低7日"],
+      "expected_source_type": [
+        "internal_policy"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第11條"
+      ],
+      "expected_key_points": [
+        "滿1年未滿2年者，安久銀行模擬內規給予8日特休",
+        "優於勞基法最低7日"
+      ],
+      "expected_answer": "依安久銀行員工工作與福利規章辦法第11條，員工服務滿1年未滿2年者可享8日特別休假，優於勞動基準法第38條最低的7日。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -179,9 +279,18 @@
       "expected_category": "working_hours",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["internal_policy"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第5條"],
-      "expected_key_points": ["原則上為週一至週五9:00至18:00", "中午休息1小時", "實際仍可能依單位制度調整"],
+      "expected_source_type": [
+        "internal_policy"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第5條"
+      ],
+      "expected_key_points": [
+        "原則上為週一至週五9:00至18:00",
+        "中午休息1小時",
+        "實際仍可能依單位制度調整"
+      ],
+      "expected_answer": "依安久銀行員工工作與福利規章辦法第5條，總行與一般行政單位的正常工作時間原則上為週一至週五9:00至18:00，中午休息1小時；各單位得依業務特性訂定彈性上下班，實際時間仍可能依單位制度調整。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -193,9 +302,18 @@
       "expected_category": "working_hours",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["internal_policy"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第6條"],
-      "expected_key_points": ["可於不影響營運與客戶服務前提下實施彈性上下班", "一般員工可於8:00至10:00間彈性上班", "分行、客服、作業中心與輪班單位得另依排班規範"],
+      "expected_source_type": [
+        "internal_policy"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第6條"
+      ],
+      "expected_key_points": [
+        "可於不影響營運與客戶服務前提下實施彈性上下班",
+        "一般員工可於8:00至10:00間彈性上班",
+        "分行、客服、作業中心與輪班單位得另依排班規範"
+      ],
+      "expected_answer": "依安久銀行員工工作與福利規章辦法第6條，本行得在不影響營運與客戶服務的前提下實施彈性上下班：一般員工可於8:00至10:00間彈性上班，並依實際上班時間完成每日應工作時數；分行櫃檯、客服、作業中心及輪班單位則另依排班規範辦理。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -207,9 +325,18 @@
       "expected_category": "leave",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["internal_policy"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第10條"],
-      "expected_key_points": ["應透過差勤系統提出申請", "依假別提供必要資料或證明", "除突發情況外應事前申請並經主管核准"],
+      "expected_source_type": [
+        "internal_policy"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第10條"
+      ],
+      "expected_key_points": [
+        "應透過差勤系統提出申請",
+        "依假別提供必要資料或證明",
+        "除突發情況外應事前申請並經主管核准"
+      ],
+      "expected_answer": "依安久銀行員工工作與福利規章辦法第10條，請假應透過本行差勤系統提出申請，並依假別提供必要資料或證明文件；除突發疾病、緊急事故或不可抗力外，應事前完成申請並經主管核准。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -221,9 +348,18 @@
       "expected_category": "leave",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["internal_policy"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第13條"],
-      "expected_key_points": ["病假1日以內得免附診斷證明", "連續病假達2日以上應檢附證明", "累計病假達HR公告標準者也可能需提供證明"],
+      "expected_source_type": [
+        "internal_policy"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第13條"
+      ],
+      "expected_key_points": [
+        "病假1日以內得免附診斷證明",
+        "連續病假達2日以上應檢附證明",
+        "累計病假達HR公告標準者也可能需提供證明"
+      ],
+      "expected_answer": "依安久銀行員工工作與福利規章辦法第13條，病假1日以內者得免附診斷證明；但連續病假達2日以上，或當年度累計病假達HR公告標準者，應檢附醫療院所證明或其他足資證明文件。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -235,9 +371,17 @@
       "expected_category": "leave",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["internal_policy"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第14條"],
-      "expected_key_points": ["事假應事前提出申請並經主管核准", "突發事故無法事前申請時，應即時通知主管並事後補辦"],
+      "expected_source_type": [
+        "internal_policy"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第14條"
+      ],
+      "expected_key_points": [
+        "事假應事前提出申請並經主管核准",
+        "突發事故無法事前申請時，應即時通知主管並事後補辦"
+      ],
+      "expected_answer": "依安久銀行員工工作與福利規章辦法第14條，事假應事前提出申請並經主管核准；若因突發事故無法事前申請，應於可通知時即時通知主管，並於事後補辦申請程序。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -249,9 +393,18 @@
       "expected_category": "overtime",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["internal_policy"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第18條"],
-      "expected_key_points": ["加班前應透過差勤系統提出申請", "需經主管核准後始得加班", "緊急情況可於事後2個工作日內補申請"],
+      "expected_source_type": [
+        "internal_policy"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第18條"
+      ],
+      "expected_key_points": [
+        "加班前應透過差勤系統提出申請",
+        "需經主管核准後始得加班",
+        "緊急情況可於事後2個工作日內補申請"
+      ],
+      "expected_answer": "依安久銀行員工工作與福利規章辦法第18條，員工加班前應透過差勤系統提出申請並經主管核准後始得加班；若因緊急事故、客服、系統異常等未及事前核准而實際延長工時者，應於事後2個工作日內補申請，並由主管及HR依出勤紀錄審核。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -263,9 +416,19 @@
       "expected_category": "overtime",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["internal_policy", "law"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第23條", "勞動基準法第32-1條"],
-      "expected_key_points": ["經核准加班後，員工得依個人意願選擇加班費或補休", "補休不得用來規避應給付加班費"],
+      "expected_source_type": [
+        "internal_policy",
+        "law"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第23條",
+        "勞動基準法第32-1條"
+      ],
+      "expected_key_points": [
+        "經核准加班後，員工得依個人意願選擇加班費或補休",
+        "補休不得用來規避應給付加班費"
+      ],
+      "expected_answer": "依安久銀行員工工作與福利規章辦法第23條，員工經核准延長工時或於休息日工作後，得依個人意願選擇領取加班費或申請補休；且依勞動基準法第32-1條的精神，本行不得以補休制度規避依法應給付之加班費。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -277,9 +440,17 @@
       "expected_category": "overtime",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["internal_policy"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第25條"],
-      "expected_key_points": ["補休應於加班事實發生日起6個月內完成安排", "因業務需求無法休畢時應由主管與HR協助處理"],
+      "expected_source_type": [
+        "internal_policy"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第25條"
+      ],
+      "expected_key_points": [
+        "補休應於加班事實發生日起6個月內完成安排",
+        "因業務需求無法休畢時應由主管與HR協助處理"
+      ],
+      "expected_answer": "依安久銀行員工工作與福利規章辦法第25條，補休應於加班事實發生日起6個月內完成安排；若因業務需求、專案排程或主管要求導致無法於期限內補休，應由主管與HR協助安排或依相關法令及本行薪酬制度發給工資。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -291,9 +462,17 @@
       "expected_category": "welfare",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["internal_policy"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第30條"],
-      "expected_key_points": ["旅遊補助依年度預算與HR公告辦理", "補助資格、金額、使用期間與申請方式以當年度公告為準"],
+      "expected_source_type": [
+        "internal_policy"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第30條"
+      ],
+      "expected_key_points": [
+        "旅遊補助依年度預算與HR公告辦理",
+        "補助資格、金額、使用期間與申請方式以當年度公告為準"
+      ],
+      "expected_answer": "依安久銀行員工工作與福利規章辦法第30條，員工旅遊補助依年度預算提供，實際補助資格、金額、使用期間及申請方式皆以當年度HR公告為準；規章本身未訂定固定金額，若預算或政策調整，HR得修正或暫停。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -305,9 +484,18 @@
       "expected_category": "welfare",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["internal_policy"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第29條"],
-      "expected_key_points": ["正式員工可享定期健康檢查補助", "一般員工每2年1次", "特定高壓、輪班或資訊維運職務得依公告提高頻率或額度"],
+      "expected_source_type": [
+        "internal_policy"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第29條"
+      ],
+      "expected_key_points": [
+        "正式員工可享定期健康檢查補助",
+        "一般員工每2年1次",
+        "特定高壓、輪班或資訊維運職務得依公告提高頻率或額度"
+      ],
+      "expected_answer": "依安久銀行員工工作與福利規章辦法第29條，本行提供正式員工定期健康檢查補助，一般員工每2年得享1次；特定高壓、輪班、資訊維運、客服及主管職務，得依HR公告提高檢查頻率或補助額度。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -319,9 +507,17 @@
       "expected_category": "welfare",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["internal_policy"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第31條"],
-      "expected_key_points": ["本行得提供教育訓練、金融證照、資訊科技證照、語言、資料分析與AI應用等補助", "補助項目與資格依教育訓練管理辦法及HR公告辦理"],
+      "expected_source_type": [
+        "internal_policy"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第31條"
+      ],
+      "expected_key_points": [
+        "本行得提供教育訓練、金融證照、資訊科技證照、語言、資料分析與AI應用等補助",
+        "補助項目與資格依教育訓練管理辦法及HR公告辦理"
+      ],
+      "expected_answer": "依安久銀行員工工作與福利規章辦法第31條，本行得提供教育訓練、金融證照、資訊科技證照、語言、資料分析、AI應用及法遵風控等課程或考試補助；補助項目、比例、申請資格、服務年限約定與退費條件，依教育訓練管理辦法及HR公告辦理。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -333,9 +529,16 @@
       "expected_category": "salary",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["internal_policy"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第34條"],
-      "expected_key_points": ["對薪資、加班費、補休折算、津貼、全勤或扣款有疑義時，可向HR薪酬窗口提出查詢"],
+      "expected_source_type": [
+        "internal_policy"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第34條"
+      ],
+      "expected_key_points": [
+        "對薪資、加班費、補休折算、津貼、全勤或扣款有疑義時，可向HR薪酬窗口提出查詢"
+      ],
+      "expected_answer": "依安久銀行員工工作與福利規章辦法第34條，員工對薪資、加班費、補休折算、津貼、全勤或扣款有疑義時，可向HR薪酬窗口提出查詢。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -347,9 +550,19 @@
       "expected_category": "high_risk",
       "expected_route": "escalate",
       "risk_level": "high",
-      "expected_source_type": ["internal_policy"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第37條", "安久銀行員工工作與福利規章辦法第38條"],
-      "expected_key_points": ["申訴屬高風險HR問題", "HR AI不得直接作最終認定", "應引導至HR、法遵或正式申訴管道"],
+      "expected_source_type": [
+        "internal_policy"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第37條",
+        "安久銀行員工工作與福利規章辦法第38條"
+      ],
+      "expected_key_points": [
+        "申訴屬高風險HR問題",
+        "HR AI不得直接作最終認定",
+        "應引導至HR、法遵或正式申訴管道"
+      ],
+      "expected_answer": "申訴結果的認定屬高風險HR問題（安久銀行員工工作與福利規章辦法第37條），HR AI智能助理依第38條的回答邊界不得直接作最終判斷或責任認定，建議您透過HR、法遵單位或本行正式申訴管道處理。",
       "should_escalate": true,
       "should_clarify": false
     },
@@ -361,9 +574,20 @@
       "expected_category": "leave",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["internal_policy", "law"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第11條", "勞動基準法第38條"],
-      "expected_key_points": ["勞基法是最低標準", "安久銀行內規提供較優條件", "內規未降低法定權益，故可優於法規"],
+      "expected_source_type": [
+        "internal_policy",
+        "law"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第11條",
+        "勞動基準法第38條"
+      ],
+      "expected_key_points": [
+        "勞基法是最低標準",
+        "安久銀行內規提供較優條件",
+        "內規未降低法定權益，故可優於法規"
+      ],
+      "expected_answer": "勞動基準法第38條訂定的是特別休假的最低標準；安久銀行員工工作與福利規章辦法第11條則提供較優的特休天數。依內規第3條「內規優於法規」原則，當本行條件優於法令最低標準時，員工適用較有利之規定，且不得解釋為降低法定權益，因此公司特休可以高於勞基法。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -375,9 +599,20 @@
       "expected_category": "leave",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["internal_policy", "law"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第11條", "勞動基準法第38條"],
-      "expected_key_points": ["勞基法滿半年未滿1年最低3日", "安久銀行模擬內規給5日", "員工適用較有利之內規"],
+      "expected_source_type": [
+        "internal_policy",
+        "law"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第11條",
+        "勞動基準法第38條"
+      ],
+      "expected_key_points": [
+        "勞基法滿半年未滿1年最低3日",
+        "安久銀行模擬內規給5日",
+        "員工適用較有利之內規"
+      ],
+      "expected_answer": "以滿6個月未滿1年為例：勞動基準法第38條的最低特休為3日，而安久銀行員工工作與福利規章辦法第11條給予5日。兩者差2日，且依較有利原則，員工適用內規的5日。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -389,9 +624,20 @@
       "expected_category": "leave",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["internal_policy", "law"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第11條", "勞動基準法第38條"],
-      "expected_key_points": ["勞基法滿1年未滿2年最低7日", "安久銀行模擬內規給8日", "公司內規較優"],
+      "expected_source_type": [
+        "internal_policy",
+        "law"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第11條",
+        "勞動基準法第38條"
+      ],
+      "expected_key_points": [
+        "勞基法滿1年未滿2年最低7日",
+        "安久銀行模擬內規給8日",
+        "公司內規較優"
+      ],
+      "expected_answer": "以滿1年未滿2年為例：勞動基準法第38條的最低特休為7日，安久銀行員工工作與福利規章辦法第11條給予8日，公司內規較優，員工適用8日。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -403,9 +649,22 @@
       "expected_category": "overtime",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["internal_policy", "law"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第20條", "安久銀行員工工作與福利規章辦法第23條", "勞動基準法第24條", "勞動基準法第32-1條"],
-      "expected_key_points": ["加班費依勞基法第24條計算", "補休依員工意願選擇", "公司不得以補休規避加班費"],
+      "expected_source_type": [
+        "internal_policy",
+        "law"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第20條",
+        "安久銀行員工工作與福利規章辦法第23條",
+        "勞動基準法第24條",
+        "勞動基準法第32-1條"
+      ],
+      "expected_key_points": [
+        "加班費依勞基法第24條計算",
+        "補休依員工意願選擇",
+        "公司不得以補休規避加班費"
+      ],
+      "expected_answer": "可以二選一。依勞動基準法第24條與安久銀行內規第20條，經核准的加班應計算加班費；同時依勞動基準法第32-1條與內規第23條，員工得依本人意願選擇補休代替加班費。但公司不得以補休制度規避依法應給付之加班費，選擇權在員工。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -417,9 +676,22 @@
       "expected_category": "overtime",
       "expected_route": "disclaimer",
       "risk_level": "medium",
-      "expected_source_type": ["internal_policy", "law"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第20條", "安久銀行員工工作與福利規章辦法第23條", "勞動基準法第24條", "勞動基準法第32-1條"],
-      "expected_key_points": ["員工可依意願選擇補休或加班費", "補休制度不得規避應給付之加班費", "實際個案需依申請紀錄與HR審核確認"],
+      "expected_source_type": [
+        "internal_policy",
+        "law"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第20條",
+        "安久銀行員工工作與福利規章辦法第23條",
+        "勞動基準法第24條",
+        "勞動基準法第32-1條"
+      ],
+      "expected_key_points": [
+        "員工可依意願選擇補休或加班費",
+        "補休制度不得規避應給付之加班費",
+        "實際個案需依申請紀錄與HR審核確認"
+      ],
+      "expected_answer": "是否給加班費，選擇權在員工而非公司片面決定：依勞動基準法第32-1條與安久銀行內規第23條，平日加班後您可選擇領加班費（平日前2小時依勞動基準法第24條加給三分之一以上）或選擇補休；公司不得以補休制度規避應給付之加班費。實際個案仍需依加班申請紀錄與HR審核確認，如有爭議建議洽HR。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -431,9 +703,20 @@
       "expected_category": "leave",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["law", "internal_policy"],
-      "expected_citations": ["勞動基準法第36條", "安久銀行員工工作與福利規章辦法第9條"],
-      "expected_key_points": ["每7日中應有1日例假與1日休息日", "安久銀行原則上以週六為休息日、週日為例假日", "輪班單位可依排班制度另行安排"],
+      "expected_source_type": [
+        "law",
+        "internal_policy"
+      ],
+      "expected_citations": [
+        "勞動基準法第36條",
+        "安久銀行員工工作與福利規章辦法第9條"
+      ],
+      "expected_key_points": [
+        "每7日中應有1日例假與1日休息日",
+        "安久銀行原則上以週六為休息日、週日為例假日",
+        "輪班單位可依排班制度另行安排"
+      ],
+      "expected_answer": "依勞動基準法第36條，勞工每7日中應有1日例假與1日休息日；安久銀行員工工作與福利規章辦法第9條則原則上以週六為休息日、週日為例假日，輪班單位得依排班制度另行安排。兩者主要差別在於例假的保障較嚴格，休息日則可在符合加班與工資規定下出勤。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -445,9 +728,20 @@
       "expected_category": "leave",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["internal_policy"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第13條", "安久銀行員工工作與福利規章辦法第14條"],
-      "expected_key_points": ["病假適用於普通傷病或就醫需求", "事假適用於個人事務", "病假連續2日以上需檢附證明", "事假原則上應事前申請並經主管核准"],
+      "expected_source_type": [
+        "internal_policy"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第13條",
+        "安久銀行員工工作與福利規章辦法第14條"
+      ],
+      "expected_key_points": [
+        "病假適用於普通傷病或就醫需求",
+        "事假適用於個人事務",
+        "病假連續2日以上需檢附證明",
+        "事假原則上應事前申請並經主管核准"
+      ],
+      "expected_answer": "依安久銀行員工工作與福利規章辦法第13、14條：病假適用於普通傷病需休養或就醫的情形，連續病假達2日以上應檢附醫療證明；事假則適用於員工因個人事務需親自處理的情形，原則上應事前提出申請並經主管核准。兩者適用事由與證明要求不同。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -459,9 +753,20 @@
       "expected_category": "leave",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["internal_policy", "law"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第11條", "勞動基準法第38條"],
-      "expected_key_points": ["年假可理解為特別休假", "安久銀行滿6個月未滿1年給5日", "法規最低為3日"],
+      "expected_source_type": [
+        "internal_policy",
+        "law"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第11條",
+        "勞動基準法第38條"
+      ],
+      "expected_key_points": [
+        "年假可理解為特別休假",
+        "安久銀行滿6個月未滿1年給5日",
+        "法規最低為3日"
+      ],
+      "expected_answer": "您說的「年假」一般指特別休假。以滿6個月未滿1年為例，安久銀行員工工作與福利規章辦法第11條給予5日，而勞動基準法第38條的最低標準為3日，因此您可休的是較有利的5日。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -473,9 +778,20 @@
       "expected_category": "leave",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["internal_policy", "law"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第11條", "勞動基準法第38條"],
-      "expected_key_points": ["若指特別休假，安久銀行滿1年未滿2年給8日", "法規最低為7日", "若不是問特休可再補充假別"],
+      "expected_source_type": [
+        "internal_policy",
+        "law"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第11條",
+        "勞動基準法第38條"
+      ],
+      "expected_key_points": [
+        "若指特別休假，安久銀行滿1年未滿2年給8日",
+        "法規最低為7日",
+        "若不是問特休可再補充假別"
+      ],
+      "expected_answer": "若您指的是特別休假：剛滿1年（未滿2年）時，安久銀行員工工作與福利規章辦法第11條給予8日，勞動基準法第38條最低為7日，故您今年可休8日特休。若您想問的是病假、事假等其他假別，歡迎再補充，我可提供對應規定。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -487,9 +803,21 @@
       "expected_category": "overtime",
       "expected_route": "disclaimer",
       "risk_level": "medium",
-      "expected_source_type": ["internal_policy", "law"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第18條", "安久銀行員工工作與福利規章辦法第20條", "勞動基準法第24條"],
-      "expected_key_points": ["若屬經核准或事實上受指派之加班，原則上應依規定計算加班費", "平日前2小時按每小時工資額加給三分之一以上", "實際仍需依加班申請、出勤紀錄與HR審核確認"],
+      "expected_source_type": [
+        "internal_policy",
+        "law"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第18條",
+        "安久銀行員工工作與福利規章辦法第20條",
+        "勞動基準法第24條"
+      ],
+      "expected_key_points": [
+        "若屬經核准或事實上受指派之加班，原則上應依規定計算加班費",
+        "平日前2小時按每小時工資額加給三分之一以上",
+        "實際仍需依加班申請、出勤紀錄與HR審核確認"
+      ],
+      "expected_answer": "如果這2小時屬於經核准、或事實上受主管指派的加班，原則上應計算加班費：依勞動基準法第24條與安久銀行內規第20條，平日延長工時前2小時按平日每小時工資額加給三分之一以上。但依內規第18條，加班原則上需事前申請或事後2個工作日內補申請，實際是否給付仍需依加班申請、出勤紀錄與HR審核確認。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -501,9 +829,18 @@
       "expected_category": "overtime",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["internal_policy"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第25條"],
-      "expected_key_points": ["安久銀行補休應於加班事實發生日起6個月內完成安排", "是否能跨年度需視發生日與HR規範而定", "若因業務因素無法休畢應由主管與HR協助處理"],
+      "expected_source_type": [
+        "internal_policy"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第25條"
+      ],
+      "expected_key_points": [
+        "安久銀行補休應於加班事實發生日起6個月內完成安排",
+        "是否能跨年度需視發生日與HR規範而定",
+        "若因業務因素無法休畢應由主管與HR協助處理"
+      ],
+      "expected_answer": "依安久銀行員工工作與福利規章辦法第25條，補休應於「加班事實發生日起6個月內」完成安排，而非以年度為界。因此能否拖到明年，要看加班發生日往後推6個月是否仍在期限內；若因業務因素無法於期限內休畢，應由主管與HR協助安排或依規定折發工資。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -515,9 +852,16 @@
       "expected_category": "leave",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["internal_policy"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第13條"],
-      "expected_key_points": ["連續病假達2日以上應檢附醫療院所證明或足資證明文件"],
+      "expected_source_type": [
+        "internal_policy"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第13條"
+      ],
+      "expected_key_points": [
+        "連續病假達2日以上應檢附醫療院所證明或足資證明文件"
+      ],
+      "expected_answer": "依安久銀行員工工作與福利規章辦法第13條，連續病假達2日以上者，應檢附醫療院所證明或其他足資證明文件，因此您請2天病假需要附證明。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -529,9 +873,18 @@
       "expected_category": "leave",
       "expected_route": "disclaimer",
       "risk_level": "medium",
-      "expected_source_type": ["internal_policy"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第15條"],
-      "expected_key_points": ["家庭成員疾病、重大事故或緊急照顧需求可依規定申請家庭照顧假", "也可依單位狀況提供彈性上班、遠距辦公或臨時調班", "實際核准仍需主管與HR評估"],
+      "expected_source_type": [
+        "internal_policy"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第15條"
+      ],
+      "expected_key_points": [
+        "家庭成員疾病、重大事故或緊急照顧需求可依規定申請家庭照顧假",
+        "也可依單位狀況提供彈性上班、遠距辦公或臨時調班",
+        "實際核准仍需主管與HR評估"
+      ],
+      "expected_answer": "依安久銀行員工工作與福利規章辦法第15條，若您因家庭成員疾病、重大事故或緊急照顧等需求，可依規定申請家庭照顧假；本行也可視單位營運狀況提供彈性上班、遠距辦公或臨時調班等協助。實際是否核准與採何種方式，仍需經主管與HR評估，建議您提出申請並說明情形。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -543,9 +896,16 @@
       "expected_category": "leave",
       "expected_route": "clarify",
       "risk_level": "medium",
-      "expected_source_type": ["internal_policy"],
+      "expected_source_type": [
+        "internal_policy"
+      ],
       "expected_citations": [],
-      "expected_key_points": ["需先確認假別、原因、期間與是否涉及病假、事假、特休或家庭照顧", "不應直接判定可以或不可以", "應請使用者補充情境"],
+      "expected_key_points": [
+        "需先確認假別、原因、期間與是否涉及病假、事假、特休或家庭照顧",
+        "不應直接判定可以或不可以",
+        "應請使用者補充情境"
+      ],
+      "expected_answer": "這需要再多一點資訊才能回答。請先說明您要請的假別（特休、病假、事假或家庭照顧假）、原因與預計期間；不同假別的條件與上限不同，我無法直接回答「可以」或「不可以」。麻煩補充上述情境，我再依規定為您說明。",
       "should_escalate": false,
       "should_clarify": true
     },
@@ -559,7 +919,12 @@
       "risk_level": "low",
       "expected_source_type": [],
       "expected_citations": [],
-      "expected_key_points": ["需追問假別", "需確認是特休、病假、事假、家庭照顧假或其他假別", "需確認是否涉及主管核准或個案爭議"],
+      "expected_key_points": [
+        "需追問假別",
+        "需確認是特休、病假、事假、家庭照顧假或其他假別",
+        "需確認是否涉及主管核准或個案爭議"
+      ],
+      "expected_answer": "好的，為了給您正確的規定，請問您要請的是哪一種假？例如特別休假、病假、事假或家庭照顧假；另外是否涉及需主管核准或特殊個案情形？確認後我再依安久銀行的請假規定協助您。",
       "should_escalate": false,
       "should_clarify": true
     },
@@ -573,7 +938,11 @@
       "risk_level": "low",
       "expected_source_type": [],
       "expected_citations": [],
-      "expected_key_points": ["問題範圍過廣，需追問欲查詢特休、例假休息日、病假、事假或補休", "不應直接輸出過長總表"],
+      "expected_key_points": [
+        "問題範圍過廣，需追問欲查詢特休、例假休息日、病假、事假或補休",
+        "不應直接輸出過長總表"
+      ],
+      "expected_answer": "「休假規定」涵蓋的範圍很廣，為避免給您過長且不一定相關的內容，請問您想了解哪一項？例如特別休假、例假與休息日、病假、事假或補休？指定後我再提供對應的規定。",
       "should_escalate": false,
       "should_clarify": true
     },
@@ -585,9 +954,17 @@
       "expected_category": "leave",
       "expected_route": "clarify",
       "risk_level": "low",
-      "expected_source_type": ["internal_policy", "law"],
+      "expected_source_type": [
+        "internal_policy",
+        "law"
+      ],
       "expected_citations": [],
-      "expected_key_points": ["應辨識特修可能為特休", "但需追問年資，例如滿半年、滿一年或其他年資", "不可在年資不足時直接回答單一天數"],
+      "expected_key_points": [
+        "應辨識特修可能為特休",
+        "但需追問年資，例如滿半年、滿一年或其他年資",
+        "不可在年資不足時直接回答單一天數"
+      ],
+      "expected_answer": "您指的應該是「特休」（特別休假）。特休天數會依年資不同而不同，例如滿6個月、滿1年或更久天數都不一樣，所以需要先確認您的到職年資，我才能告訴您正確的特休日數，以免給錯數字。請問您目前的服務年資是多久？",
       "should_escalate": false,
       "should_clarify": true
     },
@@ -599,9 +976,21 @@
       "expected_category": "overtime",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["law", "internal_policy"],
-      "expected_citations": ["勞動基準法第24條", "安久銀行員工工作與福利規章辦法第20條"],
-      "expected_key_points": ["應辨識加班廢為加班費", "平日前2小時加給三分之一以上", "再延長2小時加給三分之二以上", "不同日期加班需依實際情況計算"],
+      "expected_source_type": [
+        "law",
+        "internal_policy"
+      ],
+      "expected_citations": [
+        "勞動基準法第24條",
+        "安久銀行員工工作與福利規章辦法第20條"
+      ],
+      "expected_key_points": [
+        "應辨識加班廢為加班費",
+        "平日前2小時加給三分之一以上",
+        "再延長2小時加給三分之二以上",
+        "不同日期加班需依實際情況計算"
+      ],
+      "expected_answer": "您問的應是「加班費」。依勞動基準法第24條與安久銀行內規第20條，平日延長工時前2小時按平日每小時工資額加給三分之一以上，再延長2小時以內加給三分之二以上；若是休息日、例假日或國定假日加班，則另依相關法令與本行薪酬規範以更高標準計算。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -613,9 +1002,18 @@
       "expected_category": "welfare",
       "expected_route": "answer",
       "risk_level": "low",
-      "expected_source_type": ["internal_policy"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第30條"],
-      "expected_key_points": ["應辨識補住可能為補助", "員工旅遊補助依年度HR公告與預算辦法辦理", "資格、金額、使用期間與申請方式以最新公告為準"],
+      "expected_source_type": [
+        "internal_policy"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第30條"
+      ],
+      "expected_key_points": [
+        "應辨識補住可能為補助",
+        "員工旅遊補助依年度HR公告與預算辦法辦理",
+        "資格、金額、使用期間與申請方式以最新公告為準"
+      ],
+      "expected_answer": "您指的應是旅遊「補助」。依安久銀行員工工作與福利規章辦法第30條，員工旅遊補助依年度預算提供，實際申請資格、補助金額、使用期間與申請方式皆以當年度HR最新公告為準，建議您查閱HR公告或洽HR窗口辦理。",
       "should_escalate": false,
       "should_clarify": false
     },
@@ -627,9 +1025,20 @@
       "expected_category": "leave",
       "expected_route": "escalate",
       "risk_level": "high",
-      "expected_source_type": ["internal_policy"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第17條", "安久銀行員工工作與福利規章辦法第37條", "安久銀行員工工作與福利規章辦法第38條"],
-      "expected_key_points": ["不得直接判定是否合法", "需依假別、事由、主管核准流程與個案情況判斷", "應轉HR或正式申訴管道"],
+      "expected_source_type": [
+        "internal_policy"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第17條",
+        "安久銀行員工工作與福利規章辦法第37條",
+        "安久銀行員工工作與福利規章辦法第38條"
+      ],
+      "expected_key_points": [
+        "不得直接判定是否合法",
+        "需依假別、事由、主管核准流程與個案情況判斷",
+        "應轉HR或正式申訴管道"
+      ],
+      "expected_answer": "關於「主管不給假是否合法」，這涉及個案爭議與責任判斷，屬高風險問題，我無法直接判定是否合法。依安久銀行員工工作與福利規章辦法第17條，請假爭議應先洽直屬主管或HR服務窗口；若涉及主管不核准等個案爭議，依第37、38條應轉由HR或法遵單位、正式申訴管道處理。建議您保留相關紀錄並聯繫HR。",
       "should_escalate": true,
       "should_clarify": false
     },
@@ -641,9 +1050,22 @@
       "expected_category": "salary",
       "expected_route": "escalate",
       "risk_level": "high",
-      "expected_source_type": ["law", "internal_policy"],
-      "expected_citations": ["勞動基準法第22條", "安久銀行員工工作與福利規章辦法第35條", "安久銀行員工工作與福利規章辦法第37條", "安久銀行員工工作與福利規章辦法第38條"],
-      "expected_key_points": ["不得直接提供提告建議或法律結論", "可說明工資原則上應全額給付及不得任意預扣", "涉及薪資扣款爭議應轉HR薪酬或法遵處理"],
+      "expected_source_type": [
+        "law",
+        "internal_policy"
+      ],
+      "expected_citations": [
+        "勞動基準法第22條",
+        "安久銀行員工工作與福利規章辦法第35條",
+        "安久銀行員工工作與福利規章辦法第37條",
+        "安久銀行員工工作與福利規章辦法第38條"
+      ],
+      "expected_key_points": [
+        "不得直接提供提告建議或法律結論",
+        "可說明工資原則上應全額給付及不得任意預扣",
+        "涉及薪資扣款爭議應轉HR薪酬或法遵處理"
+      ],
+      "expected_answer": "是否提告屬法律判斷，我無法給您訴訟建議或合法性結論。原則上，依勞動基準法第22條工資應全額直接給付勞工，且依安久銀行內規第35條本行不得任意預扣工資作為違約金或賠償。但您的情形涉及薪資扣款爭議，屬高風險問題（內規第37、38條），建議轉由HR薪酬窗口或法遵單位處理，必要時尋求專業法律協助。",
       "should_escalate": true,
       "should_clarify": false
     },
@@ -655,9 +1077,23 @@
       "expected_category": "overtime",
       "expected_route": "escalate",
       "risk_level": "high",
-      "expected_source_type": ["law", "internal_policy"],
-      "expected_citations": ["勞動基準法第24條", "勞動基準法第32條", "安久銀行員工工作與福利規章辦法第21條", "安久銀行員工工作與福利規章辦法第37條", "安久銀行員工工作與福利規章辦法第38條"],
-      "expected_key_points": ["不得直接作違法判定", "可說明主管不得要求員工形式上不申報而實際提供勞務", "應保留出勤與工作紀錄並洽HR或法遵"],
+      "expected_source_type": [
+        "law",
+        "internal_policy"
+      ],
+      "expected_citations": [
+        "勞動基準法第24條",
+        "勞動基準法第32條",
+        "安久銀行員工工作與福利規章辦法第21條",
+        "安久銀行員工工作與福利規章辦法第37條",
+        "安久銀行員工工作與福利規章辦法第38條"
+      ],
+      "expected_key_points": [
+        "不得直接作違法判定",
+        "可說明主管不得要求員工形式上不申報而實際提供勞務",
+        "應保留出勤與工作紀錄並洽HR或法遵"
+      ],
+      "expected_answer": "您的情形涉及加班未申報與可能的違法爭議，屬高風險問題，我不能直接判定是否違法。依安久銀行內規第21條，主管不得要求員工形式上不申報加班卻實際提供勞務；加班費與延長工時也受勞動基準法第24、32條規範。建議您保留出勤與工作紀錄，並透過HR查核程序或法遵、正式申訴管道處理。",
       "should_escalate": true,
       "should_clarify": false
     },
@@ -669,9 +1105,21 @@
       "expected_category": "termination",
       "expected_route": "escalate",
       "risk_level": "high",
-      "expected_source_type": ["law", "internal_policy"],
-      "expected_citations": ["勞動基準法第16條", "安久銀行員工工作與福利規章辦法第37條", "安久銀行員工工作與福利規章辦法第38條"],
-      "expected_key_points": ["不得直接判定資遣是否合法", "可提示資遣預告期間與程序需依勞基法及公司流程", "應轉HR與法遵處理"],
+      "expected_source_type": [
+        "law",
+        "internal_policy"
+      ],
+      "expected_citations": [
+        "勞動基準法第16條",
+        "安久銀行員工工作與福利規章辦法第37條",
+        "安久銀行員工工作與福利規章辦法第38條"
+      ],
+      "expected_key_points": [
+        "不得直接判定資遣是否合法",
+        "可提示資遣預告期間與程序需依勞基法及公司流程",
+        "應轉HR與法遵處理"
+      ],
+      "expected_answer": "資遣是否合法需依個案具體事由與程序判斷，我無法直接認定。原則上，依勞動基準法第16條，雇主資遣應依年資於10日／20日／30日前預告，未依規定預告應給付預告期間工資，且資遣須有法定事由。但您的情形屬高風險（內規第37、38條），建議轉由HR與法遵單位協助確認，必要時尋求專業協助。",
       "should_escalate": true,
       "should_clarify": false
     },
@@ -683,9 +1131,20 @@
       "expected_category": "privacy_sensitive",
       "expected_route": "escalate",
       "risk_level": "high",
-      "expected_source_type": ["internal_policy"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第36條", "安久銀行員工工作與福利規章辦法第37條", "安久銀行員工工作與福利規章辦法第38條"],
-      "expected_key_points": ["涉及個人薪資與個資敏感資訊", "AI不得提供或協助查詢他人薪資", "應依權限與HR正式流程處理"],
+      "expected_source_type": [
+        "internal_policy"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第36條",
+        "安久銀行員工工作與福利規章辦法第37條",
+        "安久銀行員工工作與福利規章辦法第38條"
+      ],
+      "expected_key_points": [
+        "涉及個人薪資與個資敏感資訊",
+        "AI不得提供或協助查詢他人薪資",
+        "應依權限與HR正式流程處理"
+      ],
+      "expected_answer": "查詢同事的薪資涉及他人個人薪資與個資，屬敏感資訊，我無法提供或協助查詢。依安久銀行員工工作與福利規章辦法第36條，薪資與個資應依個人資料保護法及本行資訊安全政策辦理，非權責人員不得查閱；依第37、38條，此類事項應依權限與HR正式流程處理。",
       "should_escalate": true,
       "should_clarify": false
     },
@@ -697,9 +1156,20 @@
       "expected_category": "high_risk",
       "expected_route": "escalate",
       "risk_level": "high",
-      "expected_source_type": ["internal_policy"],
-      "expected_citations": ["安久銀行員工工作與福利規章辦法第37條", "安久銀行員工工作與福利規章辦法第38條", "安久銀行員工工作與福利規章辦法第39條"],
-      "expected_key_points": ["職場霸凌與申訴屬高風險HR問題", "AI不得判定誰對誰錯或責任歸屬", "應引導員工透過HR、員工關係、法遵或正式申訴程序處理"],
+      "expected_source_type": [
+        "internal_policy"
+      ],
+      "expected_citations": [
+        "安久銀行員工工作與福利規章辦法第37條",
+        "安久銀行員工工作與福利規章辦法第38條",
+        "安久銀行員工工作與福利規章辦法第39條"
+      ],
+      "expected_key_points": [
+        "職場霸凌與申訴屬高風險HR問題",
+        "AI不得判定誰對誰錯或責任歸屬",
+        "應引導員工透過HR、員工關係、法遵或正式申訴程序處理"
+      ],
+      "expected_answer": "職場霸凌的申訴屬高風險HR問題，我不能判斷誰對誰錯或責任歸屬。依安久銀行員工工作與福利規章辦法第37、38條，此類事項應由HR、法遵或員工關係單位處理；並依第39條，您可透過HR服務窗口、員工關係窗口、法遵諮詢或本行正式申訴程序提出，本行應依保密、客觀、公正及不報復原則處理。",
       "should_escalate": true,
       "should_clarify": false
     }
