@@ -291,6 +291,78 @@ class HRKnowledgeGraph:
             "context": "\n".join(context_lines),
         }
 
+    def to_mermaid(self, seeds: Optional[List[str]] = None, max_nodes: int = 30,
+                   hops: int = 1, direction: str = "TD") -> str:
+        """Render a readable Mermaid subgraph of the knowledge graph.
+
+        The full 170+ node graph is too dense to read, so we BFS out from `seeds`
+        (default: the highest-degree concept hubs) up to `max_nodes`. Reciprocal
+        edges (e.g. has_rule ↔ related_to) are collapsed to one labelled edge.
+        Chinese labels render correctly on GitHub/Mermaid — unlike a matplotlib PNG,
+        which needs a CJK font installed or shows tofu boxes.
+        """
+        if not seeds:
+            concepts = [n for n, d in self.G.nodes(data=True) if d.get("node_type") == "concept"]
+            seeds = sorted(concepts, key=lambda n: self.G.degree(n), reverse=True)[:3]
+        seeds = [s for s in seeds if s in self.G]
+
+        selected: List[str] = []
+        visited: set = set()
+        for s in seeds:
+            if s not in visited:
+                visited.add(s); selected.append(s)
+        frontier = list(seeds)
+        for _ in range(hops):
+            nxt: List[str] = []
+            for u in frontier:
+                for v in list(self.G.successors(u)) + list(self.G.predecessors(u)):
+                    if len(visited) >= max_nodes:
+                        break
+                    if v not in visited:
+                        visited.add(v); selected.append(v); nxt.append(v)
+                if len(visited) >= max_nodes:
+                    break
+            frontier = nxt
+            if len(visited) >= max_nodes:
+                break
+        nodeset = set(selected)
+
+        def esc(s: Any) -> str:
+            return str(s or "").replace('"', "'").replace("\n", " ").strip()
+
+        lines = [f"graph {direction}"]
+        for n in selected:
+            d = self.G.nodes[n]
+            lines.append(f'    {n}["{esc(d.get("label") or n)}"]')
+
+        drawn: set = set()
+        for u, v, d in self.G.edges(data=True):
+            if u not in nodeset or v not in nodeset:
+                continue
+            if (v, u) in drawn or (u, v) in drawn:
+                continue
+            rel = d.get("relation", "related_to")
+            if self.G.has_edge(v, u):  # collapse reciprocal pair into one labelled edge
+                rev = self.G[v][u].get("relation", "related_to")
+                label = rel if rel == rev else f"{rel} / {rev}"
+            else:
+                label = rel
+            drawn.add((u, v))
+            lines.append(f"    {u} -->|{esc(label)}| {v}")
+
+        by_type: Dict[str, List[str]] = defaultdict(list)
+        for n in selected:
+            by_type[self.G.nodes[n].get("node_type", "concept")].append(n)
+        styles = {
+            "concept": "fill:#e7f0ff,stroke:#3366cc,stroke-width:2px",
+            "law_article": "fill:#fff3e0,stroke:#e8920b",
+            "internal_policy_article": "fill:#e8f5e9,stroke:#2e7d32",
+        }
+        for t, ns in by_type.items():
+            lines.append(f"    classDef {t} {styles.get(t, 'fill:#eeeeee,stroke:#999999')};")
+            lines.append(f"    class {','.join(ns)} {t};")
+        return "\n".join(lines)
+
     def save_graph_files(self, output_dir: Path):
         nodes = []
         for n, d in self.G.nodes(data=True):
@@ -302,6 +374,16 @@ class HRKnowledgeGraph:
         pd.DataFrame(nodes).to_csv(output_dir / "kg_nodes.csv", index=False, encoding="utf-8-sig")
         pd.DataFrame(edges).to_csv(output_dir / "kg_edges.csv", index=False, encoding="utf-8-sig")
         nx.write_gexf(self.G, output_dir / "hr_knowledge_graph.gexf")
+        # Readable Mermaid subgraph (GitHub-renderable, CJK-safe). The full graph is too
+        # dense to read, so to_mermaid() seeds on the top concept hubs.
+        mmd = self.to_mermaid()
+        (output_dir / "hr_knowledge_graph.mmd").write_text(mmd, encoding="utf-8")
+        (output_dir / "hr_knowledge_graph.md").write_text(
+            f"# 安久銀行 HR 知識圖譜(子圖示例)\n\n"
+            f"節點 {self.G.number_of_nodes()} / 邊 {self.G.number_of_edges()};以下為概念樞紐周邊子圖。\n\n"
+            f"```mermaid\n{mmd}\n```\n",
+            encoding="utf-8",
+        )
 
 # -----------------------------
 # 6. Hybrid Retriever
