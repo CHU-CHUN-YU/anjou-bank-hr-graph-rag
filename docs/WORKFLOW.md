@@ -349,8 +349,16 @@ final_score = 0.7·rerank_norm + 0.3·hybrid_score   # RERANK_WEIGHT=0.7
 | Retrieval Hit Rate | 期望引用是否被檢索到 |
 | Source Type Hit Rate | 來源型別(法規/內規)是否命中 |
 | Citation Present Rate | 是否有引用(clarify 視為通過) |
-| Avg Faithfulness Score | 平均忠實度 |
+| Avg Faithfulness Score | 平均忠實度(啟發式,見 §6 節點⑦) |
+| RAGAS Context Recall | 標準答案要點是否被檢索到(平均) |
+| RAGAS Context Precision | 相關 context 是否排在前面(平均 AP) |
+| RAGAS Faithfulness | 答案是否 grounding 在 context(平均) |
+| RAGAS Answer Relevancy | 答案是否切題回應問題(平均) |
 | Avg Latency Sec | 平均每題耗時 |
+
+> **四個 RAGAS-style 指標**是這版新增的,**不需要 OpenAI key**。**預設 backend 為 `llm`(本地 Qwen 當 judge)**;也可設 `RAGAS_BACKEND=embedding` 改用 bge-m3 相似度 proxy(較快)。完整實作原理見 **附錄 D**。
+
+評估流程具備 **per-question checkpoint(可續跑)**:每題答完即把結果(含 RAGAS 指標)append 進 `OUTPUT_DIR/eval_checkpoint.jsonl` 並 fsync,Colab 50 分鐘斷線最多只損失「正在跑的那一題」;下次執行自動跳過已完成題,最終 summary 仍涵蓋全部 50 題(細節見附錄 D §D6)。
 
 另有 `log_feedback` 紀錄使用者回饋(helpful、正確度、完整度、評論)到 `feedback_log.csv`。
 
@@ -362,7 +370,8 @@ final_score = 0.7·rerank_norm + 0.3·hybrid_score   # RERANK_WEIGHT=0.7
 
 - `articles.json`、`chunks_3layer_faq.json` / `.csv`、`demo_results.json`
 - `kg_nodes.csv`、`kg_edges.csv`、`hr_knowledge_graph.gexf`(可用 Gephi 開)
-- `golden_dataset.csv`、`evaluation_detail.csv`(含每題 `answer_full` + `citations_json`)、`evaluation_summary.csv`
+- `golden_dataset.csv`、`evaluation_detail.csv`(含每題 `answer_full` + `citations_json`,及四個 RAGAS 欄位 `ragas_*`)、`evaluation_summary.csv`(含 RAGAS 平均)
+- `eval_checkpoint.jsonl`(可續跑的逐題 checkpoint,見附錄 D §D6)
 - `evaluation_records.json`(彙總:每題**完整答案 + 完整參考來源** + summary)
 - `evaluation_records/<id>.json`(每題各一個 JSON,完整答案 + 完整來源)
 - `feedback_log.csv`、`loaded_offline_artifacts.json`、產出說明 `README.md`
@@ -737,3 +746,91 @@ semantic_00xx  article_id=policy_18::s2  parent_id=policy_18
 
 ## C6. 一句話總結切塊
 **先把 DOCX 解析成條文(法規 priority=1、內規 priority=2 並順便算出 overrides 圖邊),再對每條同時產生 document(整份摘要)/ article(完整條文)/ semantic(約 120 字語意片段,短條文略過)三種粒度的 chunk(FAQ 預設關閉),最後組成含結構化欄位的 `embedding_text` 供嵌入與混合檢索。**
+
+---
+
+# 附錄 D:RAGAS 評估指標實作詳解
+
+本附錄說明這份 repo 如何在「**不依賴 OpenAI / 不額外接外部 API**」的前提下,實作 RAGAS 四大指標:**context recall、context precision、faithfulness、answer relevancy**。對應程式碼為 `evaluation.py` 的 `RagasScorer`(embedding backend)、`LlmRagasScorer`(LLM-as-judge backend)、`_make_ragas_scorer`、`_build_eval_entry`。
+
+## D0. 為什麼不直接用官方 `ragas` 套件
+
+官方 `ragas` 預設要一顆 LLM 當 judge **而且預設接 OpenAI**,還要 embeddings。這會破壞本專案三個前提:**(1) 無 API key、(2) Colab 50 分鐘時間限制、(3) 全離線/本地模型**。50 題 × LLM judge 也很慢。因此這裡**自己實作 RAGAS 的語意**,並提供兩種 backend,讓使用者按時間預算選擇。
+
+## D1. 兩種 backend 與切換
+
+| backend | 用什麼算 | 速度 | 何時用 |
+|---|---|---|---|
+| `llm`(預設) | **本地 Qwen 當 judge**(重用答題那顆,不重載) | 慢(每題約 4 次 LLM 呼叫) | canonical RAGAS LLM-as-judge(預設) |
+| `embedding` | 已載入的 **bge-m3** embedder 算 cosine 相似度 proxy | 快(無額外 LLM 呼叫) | 想快速、可重現、省時間 |
+
+切換用環境變數(`_make_ragas_scorer`):
+```bash
+USE_RAGAS=true            # 總開關(false=四指標全 None)
+RAGAS_BACKEND=llm         # 預設(Qwen as judge);改 embedding 用 bge-m3 proxy
+RAGAS_SIM_THRESHOLD=0.5   # embedding backend:precision/recall 的相關判定門檻
+RAGAS_LLM_MAX_CONTEXTS=6  # llm backend:judge 每題看幾段 context
+RAGAS_LLM_CTX_CHARS=400   # llm backend:每段 context 在 prompt 裡截斷字數
+```
+
+`_make_ragas_scorer(assistant)` 的決策:`USE_RAGAS!=true` → 回 `None`;`RAGAS_BACKEND`(預設 `llm`)為 `llm` → 回 `LlmRagasScorer`;為 `embedding` → 回 `RagasScorer`(從 `assistant.retriever.embedder` 取 bge-m3,取不到則回 `None` 並提示)。
+
+## D2. 每題的輸入怎麼來(`_build_eval_entry`)
+
+評估迴圈每題呼叫一次 `scorer.score(question, answer, contexts, ground_truths)`,四個輸入:
+
+| 輸入 | 來源 | 備註 |
+|---|---|---|
+| `question` | golden 題目 | — |
+| `answer` | `result["answer"]`(生成答案) | — |
+| `contexts` | `result["retrieved_chunks"]` 各 chunk 的 `content`,**取前 8 段** | 即 §7 混合檢索+rerank 後的順序;空字串會過濾 |
+| `ground_truths` | golden 的 `expected_key_points`,經 `_coerce_str_list` 正規化成字串清單 | list / JSON 字串 / 純量 / NaN 都能吃;空 → `[]` |
+
+> golden 50 題**每題都有 `expected_key_points`**(list),所以 context precision/recall 都算得出來;若某題沒有 ground truth,這兩個指標會記 `None`。
+
+## D3. Embedding backend(`RagasScorer`)— 公式
+
+所有相似度都用 **normalize 後的 bge-m3 向量**,所以 cosine = 內積。`_sim(A,B)` 回傳 `A·Bᵀ` 矩陣。門檻 `τ = RAGAS_SIM_THRESHOLD`(預設 0.5)。
+
+1. **faithfulness**(答案是否 grounding 在 context):
+   - 把 `answer` 用 `split_sentences_zh` 斷成句子 `{s_i}`,context 為 `{c_j}`;
+   - `faithfulness = mean_i ( max_j cos(s_i, c_j) )` — **每句對所有 context 取最大相似度再平均**。連續值 [0,1],不需門檻。
+2. **answer_relevancy**(答案是否切題):
+   - `answer_relevancy = cos(answer, question)` — 整段答案 vs 問題的 cosine。
+3. **context_recall**(該檢索到的有沒有檢索到):
+   - 對每個 ground-truth 要點 `g_k`,看是否有任一 context 夠相似:`covered_k = 1[ max_j cos(g_k, c_j) ≥ τ ]`;
+   - `context_recall = mean_k covered_k` — **被涵蓋的要點比例**。
+4. **context_precision**(相關 context 有沒有排前面):
+   - 對排名順序的每段 context `c_j`,標記是否相關:`rel_j = 1[ max_k cos(c_j, g_k) ≥ τ ]`;
+   - 對這個 0/1 序列算 **average precision(AP)**:`AP = (Σ_j rel_j · precision@j) / (Σ_j rel_j)`,其中 `precision@j` = 前 j 段裡相關的比例。相關 context 排越前,分數越高;全不相關時記 0.0。
+
+## D4. LLM backend(`LlmRagasScorer`)— Qwen 當 judge
+
+重用 `call_llm_json`(就是 §8 包裝層 ③,temperature=0、要求只輸出 JSON、regex 抽 JSON),呼叫的是**答題用的同一顆 Qwen**,不重載、不接外部 API。context 在 prompt 裡**最多 `RAGAS_LLM_MAX_CONTEXTS`(6)段、每段截 `RAGAS_LLM_CTX_CHARS`(400)字**,控制 token。
+
+每個指標一次 judge 呼叫(每題最多 4 次):
+
+1. **faithfulness**:給 context + answer,要 Qwen 把答案**拆成數個陳述**並逐一判斷能否由 context 支持 → JSON `{"statements":[{"text","supported":bool}]}` → `score = 支持數 / 總數`。
+2. **context_recall**:給 context + 標準答案要點(逐點),要 Qwen 判斷每點**能否在 context 找到依據** → `{"points":[{"text","attributable":bool}]}` → `score = 可歸因數 / 總數`。
+3. **context_precision**:給標準答案要點 + 排名後的檢索段落,要 Qwen 逐段判斷**是否相關** → `{"contexts":[{"index","relevant":bool}]}` → 依 index 還原 0/1 序列,算與 D3 相同的 **average precision**。
+4. **answer_relevancy**:給 question + answer,要 Qwen 給 **0–100 整數分** → `{"score":int}` → `score/100` 並夾到 [0,1]。
+
+**穩健性**:小模型偶爾吐壞 JSON。`call_llm_json` 抽不到就回預設 `{}`,對應指標記 `None`;`answer_relevancy` 的 `score` 非數字也記 `None`。`None` 不會灌進平均(見 D5),保持誠實。
+
+## D5. 寫進哪、平均怎麼算
+
+- 四個欄位名固定為 `RAGAS_FIELDS`:`ragas_faithfulness`、`ragas_answer_relevancy`、`ragas_context_precision`、`ragas_context_recall`。
+- 每題透過 `_build_eval_entry` 併進該題 entry,流向 **checkpoint JSONL → `evaluation_detail.csv` → `evaluation_records*.json`**;`_entry_to_row` / `_entry_to_record` 都用 `.get()` 帶出,缺值為 `None`。
+- summary 用 `_mean_opt(col)`:**只對非 None 的數值取平均**(`None` / `NaN` 一律跳過),得到 `RAGAS Context Recall / Precision / Faithfulness / Answer Relevancy` 四個平均。某指標整欄皆 None(如關閉或全部 parse 失敗)→ 平均為 `None`。
+
+## D6. 與 checkpoint 續跑的關係
+
+RAGAS 指標是**逐題隨答案一起寫進 `eval_checkpoint.jsonl`**(每行一題,fsync 落地)。所以:
+
+- Colab 50 分鐘斷線最多損失「正在算的那一題」;下次執行 `_load_eval_checkpoint` 讀回已完成題、**跳過(連 RAGAS 一起跳過,不重算)**,只補跑剩下的;
+- 最終 detail / summary 一律對**全部 50 題**(已完成 + 新跑)計算;
+- 注意:**舊 checkpoint(本功能之前產生的)沒有 RAGAS 欄位,resume 時不會回填**(那些題會是 `None`);要全題都有 RAGAS,刪掉 `eval_checkpoint.jsonl` 重跑即可。
+
+## D7. 一句話總結 RAGAS 實作
+
+**四個 RAGAS 指標都在本地、無外部 API 下計算:預設用 bge-m3 cosine 相似度做 proxy(faithfulness=答案句對 context 的最大相似度均值、answer relevancy=答案對問題 cosine、context recall=要點被涵蓋比例、context precision=相關 context 的 average precision);或設 `RAGAS_BACKEND=llm` 改用本地 Qwen 當 judge 做 canonical 的拆陳述/判歸因/判相關;結果逐題寫入可續跑的 checkpoint,summary 以跳過 None 的方式取平均。**

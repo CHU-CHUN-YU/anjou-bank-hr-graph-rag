@@ -197,8 +197,8 @@ def save_outputs(output_dir: Path, articles, chunks, kg: HRKnowledgeGraph, demo_
 - chunks_3layer_faq.json / csv
 - kg_nodes.csv / kg_edges.csv / hr_knowledge_graph.gexf
 - golden_dataset.csv
-- evaluation_detail.csv（含每題完整答案 answer_full 與來源 citations_json）
-- evaluation_summary.csv
+- evaluation_detail.csv（含每題完整答案 answer_full 與來源 citations_json，及 RAGAS metrics:ragas_context_recall / ragas_context_precision / ragas_faithfulness / ragas_answer_relevancy）
+- evaluation_summary.csv（含 RAGAS Context Recall / Precision / Faithfulness / Answer Relevancy 平均）
 - evaluation_records.json（彙總:每題完整答案 + 完整參考來源 + summary）
 - evaluation_records/<id>.json（每題各一個 JSON,完整答案 + 完整來源）
 - demo_results.json

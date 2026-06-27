@@ -69,7 +69,36 @@ Offline artifacts (9 JSON) ───┘
         ▼
  Evaluation vs. golden set:
    category · route · retrieval-hit · source-type-hit · citation · faithfulness · latency
+   + RAGAS-style: context-recall · context-precision · faithfulness · answer-relevancy
 ```
+
+**RAGAS-style metrics** (per question, in `evaluation_detail.csv` /
+`evaluation_records*.json`; means in `evaluation_summary.csv`) are computed **with no
+external API** — either with the already-loaded bge-m3 embedder or with the local Qwen as
+judge (see backends below) — so they fit the offline / Colab design. The columns:
+
+| Column | Meaning |
+|---|---|
+| `ragas_context_recall` | Fraction of golden `expected_key_points` each ≥`RAGAS_SIM_THRESHOLD`-similar to some retrieved context — *was the truth retrieved?* |
+| `ragas_context_precision` | Average precision of the ranked contexts (relevant = ≥threshold-similar to a key point) — *are relevant contexts ranked high?* |
+| `ragas_faithfulness` | Mean over answer sentences of max similarity to any retrieved context — *is the answer grounded?* |
+| `ragas_answer_relevancy` | Similarity of the whole answer to the question — *does it address the question?* |
+
+Two backends (set `RAGAS_BACKEND`):
+
+- **`llm`** (default) — the **local Qwen as judge** (the same model used for answer
+  generation, reused with no reload or external API). This is the canonical RAGAS
+  LLM-as-judge formulation: statement-level support (faithfulness), key-point attribution
+  (context recall), per-context relevance (context precision), and a 0–100 relevancy score.
+  It adds ~4 LLM calls per question, so it is noticeably slower — but every score is
+  checkpointed, so a Colab disconnect still resumes.
+- **`embedding`** — bge-m3 cosine-similarity proxy. Fast, deterministic, no extra LLM calls
+  (`RAGAS_BACKEND=embedding`). Tune the precision/recall cutoff with `RAGAS_SIM_THRESHOLD`
+  (default `0.5`).
+
+Disable entirely with `USE_RAGAS=false`. Metrics are `None` (skipped in the mean) when
+inputs are missing (no ground-truth key points) or, for the `llm` backend, when the judge
+emits unparseable JSON. These complement the existing heuristic `faithfulness_score`.
 
 > Every stage prints a `[STAGE] <name> — <facts>` line (with a short content preview)
 > so you can see what each step produced; silence it with `STAGE_LOG=false`.
@@ -159,6 +188,10 @@ Re-running with the same `OUTPUT_DIR` auto-resumes. To start fresh, delete
 | `USE_LOCAL_LLM_FOR_QUERY_UNDERSTANDING` | `true` | Local-LLM query classification |
 | `LOCAL_LLM_OPTIONAL_REWRITE_MAX_TERMS` | `5` | Max optional LLM query-expansion terms |
 | `USE_GOLDEN_AS_FAQ_CHUNKS` | `false` | Keep eval data out of the KB (leave false) |
+| `USE_RAGAS` | `true` | Compute RAGAS-style metrics (context recall/precision, faithfulness, answer relevancy) per question |
+| `RAGAS_BACKEND` | `llm` | `llm` = local Qwen as judge (canonical RAGAS, ~4 LLM calls/question, slower); `embedding` = bge-m3 similarity proxy (fast, no extra LLM) |
+| `RAGAS_SIM_THRESHOLD` | `0.5` | (embedding backend) Cosine-sim cutoff for context precision/recall relevance |
+| `RAGAS_LLM_MAX_CONTEXTS` / `RAGAS_LLM_CTX_CHARS` | `6` / `400` | (llm backend) Contexts judged per question / chars per context in the judge prompt |
 | `LOAD_PENDING_GRAPH_EDGES` | `false` | Load only HR-approved graph edges |
 | `STAGE_LOG` | `true` | Print a `[STAGE]` line per pipeline step (what each stage output) |
 | `STAGE_LOG_PREVIEW` | `160` | Max chars of the per-stage content preview |
