@@ -127,6 +127,38 @@ def _coerce_str_list(val: Any) -> List[str]:
     return [s] if s else []
 
 
+# Golden columns that may hold a full reference answer, in priority order. The dataset
+# ships only expected_key_points, but if you add a free-text answer column (any of these),
+# the RAGAS context metrics use it instead — see _resolve_ground_truths.
+_REFERENCE_ANSWER_COLS = ("expected_answer", "reference_answer", "ground_truth", "golden_answer")
+
+
+def _resolve_ground_truths(row: pd.Series) -> List[str]:
+    """Ground truth (a list of statements) for RAGAS context recall / precision.
+
+    Prefers a full reference answer (expected_answer / reference_answer / ground_truth /
+    golden_answer) when the golden row has one, decomposing free text into sentence-level
+    statements so recall/precision keep per-statement granularity (this matches RAGAS,
+    which breaks the ground-truth answer into statements). Falls back to the pre-decomposed
+    expected_key_points. Returns [] when neither is present (→ those two metrics become None).
+    """
+    for col in _REFERENCE_ANSWER_COLS:
+        val = row.get(col)
+        if val is None or (isinstance(val, float) and np.isnan(val)):
+            continue
+        if isinstance(val, (list, tuple, np.ndarray)):
+            items = _coerce_str_list(val)  # already a list of statements → use as-is
+            if items:
+                return items
+            continue
+        s = str(val).strip()
+        if not s or s.lower() == "nan":
+            continue
+        sents = split_sentences_zh(s)  # free-text answer → decompose into statements
+        return sents if sents else [s]
+    return _coerce_str_list(row.get("expected_key_points"))
+
+
 class RagasScorer:
     """Embedding-based RAGAS-style metrics — no external LLM/API call.
 
@@ -344,7 +376,7 @@ def _build_eval_entry(row: pd.Series, result: Dict[str, Any], latency: float,
     if scorer is not None:
         contexts = [str(c.get("content", "")) for c in result.get("retrieved_chunks", [])
                     if str(c.get("content", "")).strip()][:8]
-        ground_truths = _coerce_str_list(row.get("expected_key_points"))
+        ground_truths = _resolve_ground_truths(row)
         try:
             ragas = scorer.score(q, result.get("answer", ""), contexts, ground_truths)
         except Exception as e:  # never let metric scoring break the eval loop
