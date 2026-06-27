@@ -165,8 +165,17 @@ LOCAL_LLM_OPTIONAL_REWRITE_MAX_TERMS = int(os.getenv("LOCAL_LLM_OPTIONAL_REWRITE
 # template answer (useful for running the pipeline without the GPU/transformers stack).
 USE_LLM = os.getenv("USE_LLM", "true").lower() == "true"
 
-OUTPUT_DIR = Path("/content/hr_ai_graph_rag_outputs") if IN_COLAB else Path("./hr_ai_graph_rag_outputs")
+# OUTPUT_DIR holds every artifact AND the resumable eval checkpoint. On Colab the
+# default /content/ is wiped on disconnect, so to survive the 50-min runtime limit and
+# auto-resume across sessions, mount Google Drive and set OUTPUT_DIR to a Drive path,
+# e.g.  OUTPUT_DIR=/content/drive/MyDrive/hr_ai_graph_rag_outputs
+_default_output = "/content/hr_ai_graph_rag_outputs" if IN_COLAB else "./hr_ai_graph_rag_outputs"
+OUTPUT_DIR = Path(os.getenv("OUTPUT_DIR", _default_output))
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+# Per-question evaluation checkpoint (JSONL, one record per line). Lives inside OUTPUT_DIR
+# so pointing OUTPUT_DIR at Drive makes the checkpoint persist and the eval auto-resume.
+EVAL_CHECKPOINT_PATH = Path(os.getenv("EVAL_CHECKPOINT_PATH", str(OUTPUT_DIR / "eval_checkpoint.jsonl")))
 
 # Repo root and bundled data locations (used for zero-config local runs).
 # Layout:  <repo>/src/hr_ai_graph_rag/config.py  +  <repo>/data/{policies,golden,hr_offline_artifacts}
@@ -267,6 +276,7 @@ def print_config_summary() -> None:
     print("HF_LLM_USE_4BIT =", HF_LLM_USE_4BIT)
     print("EMBEDDING_MODEL =", EMBEDDING_MODEL_NAME)
     print("OUTPUT_DIR =", OUTPUT_DIR)
+    print("EVAL_CHECKPOINT_PATH =", EVAL_CHECKPOINT_PATH)
     print("LABOR_LAW_DOCX_PATH =", LABOR_LAW_DOCX_PATH or "<upload required>")
     print("INTERNAL_POLICY_DOCX_PATH =", INTERNAL_POLICY_DOCX_PATH or "<upload required>")
     print("GOLDEN_DATASET_JSON_PATH =", GOLDEN_DATASET_JSON_PATH or "<upload required>")

@@ -304,32 +304,40 @@ def _main():
     stage_log("retriever", f"HybridRetriever ready over {len(chunks)} chunks (dense embedding + BM25 + rerank)")
     assistant = HRAssistantGraph(retriever, kg, artifacts=offline_artifacts)
 
-    # Use first 9 questions from the uploaded Golden Dataset as demo questions.
-    demo_questions = golden_df["question"].dropna().astype(str).head(9).tolist()
-
+    # Showcase demo (first DEMO_QUESTIONS golden questions). This is purely illustrative
+    # and its LLM calls are NOT part of the saved evaluation, so on a resumed Colab run
+    # (eval checkpoint already has entries) we skip it to spend the 50-min budget on the
+    # remaining real evaluation questions. Set DEMO_QUESTIONS=0 to always skip it.
+    n_demo = int(os.getenv("DEMO_QUESTIONS", "9"))
+    already_done = eval_checkpoint_count()
     demo_results = []
-    stage_log("demo", f"running {len(demo_questions)} golden questions through the workflow…")
-    print("\nRunning demo questions...")
-    for q in demo_questions:
-        r = assistant.ask(q)
-        demo_results.append(r)
+    if n_demo > 0 and already_done == 0:
+        demo_questions = golden_df["question"].dropna().astype(str).head(n_demo).tolist()
+        stage_log("demo", f"running {len(demo_questions)} golden questions through the workflow…")
+        print("\nRunning demo questions...")
+        for q in demo_questions:
+            r = assistant.ask(q)
+            demo_results.append(r)
 
-    # Show first 3 detailed results
-    for r in demo_results[:3]:
-        display_result(r)
+        # Show first 3 detailed results
+        for r in demo_results[:3]:
+            display_result(r)
 
-    batch_df = pd.DataFrame([{
-        "question": r.get("question"),
-        "intent": r.get("intent"),
-        "category": r.get("category"),
-        "route": r.get("route"),
-        "risk_level": r.get("risk_level"),
-        "confidence": r.get("confidence"),
-        "faithfulness_score": r.get("faithfulness_score"),
-        "answer_preview": r.get("answer", "")[:160],
-    } for r in demo_results])
-    display(Markdown("# Batch Demo Summary"))
-    display(batch_df)
+        batch_df = pd.DataFrame([{
+            "question": r.get("question"),
+            "intent": r.get("intent"),
+            "category": r.get("category"),
+            "route": r.get("route"),
+            "risk_level": r.get("risk_level"),
+            "confidence": r.get("confidence"),
+            "faithfulness_score": r.get("faithfulness_score"),
+            "answer_preview": r.get("answer", "")[:160],
+        } for r in demo_results])
+        display(Markdown("# Batch Demo Summary"))
+        display(batch_df)
+    else:
+        reason = "resuming from eval checkpoint" if already_done else "DEMO_QUESTIONS=0"
+        stage_log("demo", f"skipped ({reason}) — going straight to evaluation")
 
     # Evaluation on uploaded Golden Dataset JSON
     eval_detail, eval_summary = evaluate_assistant(assistant, golden_df)

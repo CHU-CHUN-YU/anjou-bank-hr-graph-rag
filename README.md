@@ -116,6 +116,29 @@ DOCX placed in `data/policies/` (filename containing 勞動基準法 / 勞基法
 auto-discovered too; if none is present, a built-in sample of key articles is used so
 the pipeline still runs end-to-end. Override with `LABOR_LAW_DOCX_PATH`.
 
+### Surviving Colab's runtime limit (resumable evaluation)
+
+The evaluation step runs **every** Golden-Dataset question through the LLM and **checkpoints
+after each one** (`OUTPUT_DIR/eval_checkpoint.jsonl`, one record per line, fsync'd). If the
+session is cut off (Colab's ~50-min free limit), at most the single in-flight question is
+lost. On the next run, completed questions are loaded from the checkpoint and skipped, so
+only the remaining ones are generated — and the **final detail/summary are always computed
+over all questions** (resumed + new). Finished questions also skip the showcase demo so the
+time budget goes to real evaluation.
+
+To make the checkpoint (and all outputs) survive a disconnect on Colab, mount Google Drive
+and point `OUTPUT_DIR` at it — `/content/` is wiped on disconnect, Drive is not:
+
+```python
+from google.colab import drive; drive.mount('/content/drive')
+import os; os.environ['OUTPUT_DIR'] = '/content/drive/MyDrive/hr_ai_graph_rag_outputs'
+# then run the pipeline; re-run the SAME cell/notebook after a disconnect to resume:
+!PYTHONPATH=src python -m hr_ai_graph_rag
+```
+
+Re-running with the same `OUTPUT_DIR` auto-resumes. To start fresh, delete
+`eval_checkpoint.jsonl` (or set `EVAL_CHECKPOINT_PATH` elsewhere).
+
 ### Configuration (environment variables)
 
 | Variable | Default | Purpose |
@@ -141,6 +164,9 @@ the pipeline still runs end-to-end. Override with `LABOR_LAW_DOCX_PATH`.
 | `STAGE_LOG_PREVIEW` | `160` | Max chars of the per-stage content preview |
 | `RUN_LOG` | `true` | Tee all console output (prints + `[STAGE]`) to a log file |
 | `RUN_LOG_FILE` | `OUTPUT_DIR/run_log.txt` | Path of the saved run log |
+| `OUTPUT_DIR` | `./hr_ai_graph_rag_outputs` (`/content/...` in Colab) | All outputs + eval checkpoint; point at Google Drive to survive a Colab disconnect |
+| `EVAL_CHECKPOINT_PATH` | `OUTPUT_DIR/eval_checkpoint.jsonl` | Resumable per-question eval checkpoint (delete to start fresh) |
+| `DEMO_QUESTIONS` | `9` | Showcase demo question count (`0` = skip; auto-skipped when resuming) |
 
 > The default `Qwen/Qwen2.5-1.5B-Instruct` is **not gated** — no HuggingFace token or
 > license acceptance is needed. If you switch `HF_LLM_MODEL_NAME` to a gated model (e.g.
