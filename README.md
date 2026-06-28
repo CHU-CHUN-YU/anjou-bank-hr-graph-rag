@@ -36,6 +36,8 @@ HuggingFace LLM (no OpenAI API key required) intended for a Colab T4 GPU.
 │   └── test_retrieval_rerank.py    # embeddings + cross-encoder rerank (needs ML stack)
 ├── docs/
 │   ├── WORKFLOW.md                     # detailed system & workflow walkthrough (中文)
+│   ├── METADATA.md                     # chunk & knowledge-graph metadata fields + examples (中文)
+│   ├── knowledge_graph_example.md      # GitHub-renderable Mermaid sub-graph of the KG (中文)
 │   └── README_RUNTIME_PATTERN_REWRITE.md   # original design notes (中文)
 ├── scripts/run_local.sh
 ├── requirements.txt                # full stack (embeddings + local LLM, GPU)
@@ -226,4 +228,8 @@ Re-running with the same `OUTPUT_DIR` auto-resumes. To start fresh, delete
   `feedback_log.csv`, the run log, and a bundled ZIP (auto-downloaded in Colab).
 - See `docs/WORKFLOW.md` for a very detailed (Chinese) walkthrough of the whole
   pipeline and the per-question LangGraph workflow.
+- See `docs/METADATA.md` for the metadata fields and real examples of each chunk type
+  and of the knowledge-graph nodes/edges (Chinese).
+- See `docs/knowledge_graph_example.md` for a GitHub-renderable Mermaid sub-graph of the
+  knowledge graph (172 nodes / 239 edges; Chinese).
 - See `docs/README_RUNTIME_PATTERN_REWRITE.md` for the original (Chinese) design notes.
